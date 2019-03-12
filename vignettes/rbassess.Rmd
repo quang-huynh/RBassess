@@ -1,0 +1,72 @@
+---
+title: "User guide to the RBassess package"
+author: "by Quang C. Huynh <q.huynh@oceans.ubc.ca>"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette: 
+    toc: true
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{User guide to RBassess}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({ TeX: { equationNumbers: {autoNumber: "all"} } });
+</script>
+
+<style type="text/css">
+h1 { /* Header 1 */
+ font-size: 24px;
+}
+</style>
+
+```{r setup, include = FALSE, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+library(RBassess)
+data(BC_lakes)
+data_object <- BC_lakes[[1]]
+
+```
+
+# Introduction
+
+This package is a stock assessment model primarily intended for rainbow trout (*Oncorhynchus mykiss*) stocked in small lakes in British Columbia, Canada. From an occasional gillnet survey, age and length samples are obtained, from which mortality and growth (assuming equilibrium) could be estimated. It is assumed that the stocking abundance and the length of fish at the time of stocking are known. 
+
+This vignette provides a summary of the available features for fitting the model to data.
+
+# Model description
+
+The description of the assessment model can be obtained [here](assess.html).
+
+# Importing data
+
+The data can be imported into the package through a single S4 object of class `RBdata`.
+```{r, eval = FALSE}
+data_object <- new("RBdata")
+```
+The necessary entries and formats for data in the `RBdata` object can be found in the help page by typing `class?RBdata` in the R console.
+
+# Estimating posterior mode
+
+From the `RBdata` object, the model can be fit with the `fit_model` function:
+```{r}
+model <- fit_model(data_object)
+```
+The point estimates from the model are the posterior modes the conditional on the priors provided in the `RBdata` object.
+
+```{r}
+summary(model)
+```
+```{r, eval = FALSE}
+plot(model)
+```
+# MCMC sampling
+
+# Reporting
+
+
