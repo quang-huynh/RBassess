@@ -54,5 +54,5 @@ stan_dens(samps) # Density plot of posteriors
 }
 }
 \seealso{
-\link{fit_model} \link{plot,stanfit,missing-method}
+\link{fit_model} \link{summary.stanfit} \link{plot.stanfit}
 }

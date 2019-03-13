@@ -1,3 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^\Workfile\$
+^Workfile$
+^vignettes/vignette_example.Rdata$
+^.gitignore$
+^.Rhistory$

@@ -3,4 +3,5 @@
 .RData
 .Ruserdata
 Workfile
-
+src/*.dll
+src/*.o

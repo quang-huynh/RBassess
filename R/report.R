@@ -1,13 +1,20 @@
 
-
 #' @name report
+#'
 #' @title HTML report for assessment model
 #'
 #' @description Returns an HTML document with figures showing data, model fits, and diagnostics.
 #'
-#' @param x An object of class `RBfit`, returned from \link{fit_model}.
+#' @param x An object of class \code{RBfit} returned from \link{fit_model} or class \code{stanfit}
+#' returned from \link{run_mcmc}.
 #' @param dir The directory for saving the HTML document.
 #' @param author A character string for the author.
+#' @param bubble Numeric for scaling size of bubbles in bubble plot. See \link{plot.RBdata}.
+#' @export
+setGeneric("report", function(x, y, ...) standardGeneric("report"))
+
+
+#' @rdname report
 #' @importFrom rmarkdown render
 #' @export
 setMethod("report", signature(x = "RBfit", y = "missing"),

@@ -3,17 +3,23 @@
 \docType{methods}
 \name{report}
 \alias{report}
+\alias{report,RBfit,missing-method}
 \title{HTML report for assessment model}
 \usage{
+report(x, y, ...)
+
 \S4method{report}{RBfit,missing}(x, dir = tempdir(), author = NULL,
   bubble = 7, ...)
 }
 \arguments{
-\item{x}{An object of class `RBfit`, returned from \link{fit_model}.}
+\item{x}{An object of class \code{RBfit} returned from \link{fit_model} or class \code{stanfit}
+returned from \link{run_mcmc}.}
 
 \item{dir}{The directory for saving the HTML document.}
 
 \item{author}{A character string for the author.}
+
+\item{bubble}{Numeric for scaling size of bubbles in bubble plot. See \link{plot.RBdata}.}
 }
 \description{
 Returns an HTML document with figures showing data, model fits, and diagnostics.

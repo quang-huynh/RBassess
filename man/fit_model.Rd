@@ -34,5 +34,5 @@ mod <- fit_model(BC_lakes[[1]]) # Run model
 plot(mod) # View model results
 }
 \seealso{
-\link{run_mcmc} \link{simulation}
+\link{run_mcmc} \link{simulation} \link{summary.RBfit} \link{plot.RBfit}
 }

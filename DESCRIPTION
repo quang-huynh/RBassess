@@ -1,23 +1,19 @@
 Package: RBassess
-Title: An age- and length-based assessment model for rainbow trout in British Columbia, Canada
+Title: An Age- and Length-based Assessment Model for Rainbow Trout in British Columbia, Canada
 Version: 0.0.0.9000
-Authors@R: person("Quang", "Huynh", email = "q.huynh@oceans.ubc.ca", role = c("aut", "cre"))
-Date: 2018-10-01
+Author: person("Quang", "Huynh", email = "q.huynh@oceans.ubc.ca", role = c("aut", "cre"))
+Date: 2019-03-12
 Maintainer: Quang Huynh <q.huynh@oceans.ubc.ca>
 Description: Description here.
 License: GPL-3
 Depends:
   R (>= 3.3.0), tmbstan
-Imports: TMB, grDevices, graphics, methods, rstan
+Imports: TMB, grDevices, graphics, methods, rstan, rmarkdown, knitr
 LinkingTo: TMB, RcppEigen
 LazyData: yes
 LazyLoad: yes
 RoxygenNote: 6.1.1
-Suggests: 
-    knitr,
-    testthat,
-    rmarkdown
 VignetteBuilder: knitr
 URL: https://www.github.com/quang-huynh/RBassess
-BugReports: https://www.githubcom/quang-huynh/RBassess
+BugReports: https://www.github.com/quang-huynh/RBassess
 Encoding: UTF-8

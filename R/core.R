@@ -23,7 +23,7 @@ NULL
 #' @param upper A vector of the upper bounds of the parameters. This argument overrides the default, and thus generally not recommended to use.
 #' @param control A list of control arguments to be passed to \link[stats]{nlminb}.
 #' @param ... More arguments to pass in.
-#' @seealso \link{run_mcmc} \link{simulation}
+#' @seealso \link{run_mcmc} \link{simulation} \link{summary.RBfit} \link{plot.RBfit}
 #' @useDynLib RBassess
 #' @import TMB
 #' @importFrom stats nlminb
@@ -85,7 +85,7 @@ fit_model <- function(RBdata, start = NULL, nit_harvest = 5L, use_priors = TRUE,
 #' @param lower A vector of the lower bounds of the parameters. This argument overrides the default, and thus generally not recommended to use.
 #' @param upper A vector of the upper bounds of the parameters. This argument overrides the default, and thus generally not recommended to use.
 #' @param ... More arguments to pass to \code{rstan::sampling} via \link[tmbstan]{tmbstan}, for example, \code{init} for starting values for the MCMC.
-#' @seealso \link{fit_model} \link{plot,stanfit,missing-method}
+#' @seealso \link{fit_model} \link{summary.stanfit} \link{plot.stanfit}
 #' @importFrom tmbstan tmbstan
 #' @importFrom TMB MakeADFun
 #' @examples

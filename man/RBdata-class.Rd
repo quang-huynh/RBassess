@@ -15,7 +15,7 @@ An S4 class for setting up inputs for the rainbow trout assessment.
 
 \item{\code{Year}}{Year of survey.}
 
-\item{\code{Length_bin}}{A vector of midpoints of the length bins. Width of all length bins assumed to be equal.}
+\item{\code{Length_bin}}{A vector of midpoints of the length bins. Width of all length bins assumed to be equal. Typically in centimeters.}
 
 \item{\code{Age}}{A vector of integer ages. Should be consecutive from 1 to the maximum age.}
 
@@ -27,13 +27,13 @@ length equal to \code{length(Length_bins)}.}
 \item{\code{Age_length}}{A matrix (single year sample) for the age-length sammples. The matrix should have
 \code{length(Age)} rows and \code{length(Length_bins)} columns.}
 
-\item{\code{L_stock}}{A vector of lengths at stocking, in order of the corresponding ages.}
+\item{\code{L_stock}}{A vector of mean lengths at stocking, in order of the corresponding ages.}
 
-\item{\code{stock_density}}{A vector of stocking density,  in order of the corresponding ages.}
+\item{\code{stock_density}}{A vector of stocking density, in order of the corresponding ages. In units of numbers per hectacre.}
 
-\item{\code{bag_limit}}{The daily bag limit (per day) used to calculated the probability of harvesting.}
+\item{\code{bag_limit}}{The daily bag limit (number of fish per angler day) used to calculated the probability of harvesting.}
 
-\item{\code{M_release}}{The assumed mortality from catch and release.}
+\item{\code{M_release}}{The assumed instantaneous mortality rate (per year) from catch and release.}
 
 \item{\code{prior_Linf}}{Von Bertalanffy asymptotic length. Vector of length two for mean and standard deviation, respectively.}
 
@@ -41,9 +41,9 @@ length equal to \code{length(Length_bins)}.}
 
 \item{\code{prior_CV_Len}}{Coefficient in variation in length-at-age. Vector of length two for mean and standard deviation, respectively.}
 
-\item{\code{prior_M}}{Natural mortality. Vector of length two for mean and standard deviation, respectively.}
+\item{\code{prior_M}}{Instantaneous natural mortality (per year). Vector of length two for mean and standard deviation, respectively.}
 
-\item{\code{prior_Effort}}{Fishing effort. Vector of length two for mean and standard deviation, respectively.}
+\item{\code{prior_Effort}}{Fishing effort. Vector of length two for mean and standard deviation, respectively. In units of angler days per hectacre.}
 
 \item{\code{prior_q}}{Catchability coefficient for scaling effort. Vector of length two for mean and standard deviation, respectively.}
 
@@ -66,5 +66,5 @@ Asky, P.J. Post, J.R., Parkinson, E.A., Rivot, E., Paul, A.J., and Biro, P.A. 20
 sampling units: A hierarchical Bayesian analysis using mark-recapture data. Fisheries Research 83: 162-174.
 }
 \seealso{
-\link{fit_model} \link{run_mcmc} \link{BC_lakes} \link{plot,RBdata,ANY-method}
+\link{fit_model} \link{run_mcmc} \link{BC_lakes} \link{plot.RBdata}
 }

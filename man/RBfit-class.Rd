@@ -23,5 +23,5 @@ An S4 class for posterior mode output from rainbow trout assessment model.
 }}
 
 \seealso{
-\link{plot,RBfit,missing-method} \link{summary,RBfit-method}
+\link{plot.RBfit} \link{summary.RBfit}
 }
