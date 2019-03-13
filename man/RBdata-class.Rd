@@ -13,11 +13,11 @@ An S4 class for setting up inputs for the rainbow trout assessment.
 \describe{
 \item{\code{Lake}}{Name of lake.}
 
-\item{\code{Year}}{A vector of years.}
+\item{\code{Year}}{Year of survey.}
 
 \item{\code{Length_bin}}{A vector of midpoints of the length bins. Width of all length bins assumed to be equal.}
 
-\item{\code{Age}}{A vector of integer ages.}
+\item{\code{Age}}{A vector of integer ages. Should be consecutive from 1 to the maximum age.}
 
 \item{\code{Age_adjust}}{A vector of accumulated growing degree days (converted to years) corresponding to the integer ages.}
 
@@ -27,9 +27,9 @@ length equal to \code{length(Length_bins)}.}
 \item{\code{Age_length}}{A matrix (single year sample) for the age-length sammples. The matrix should have
 \code{length(Age)} rows and \code{length(Length_bins)} columns.}
 
-\item{\code{L_stock}}{A vector of lengths at stocking, in order of the corresponding ages. (Multiple years)?}
+\item{\code{L_stock}}{A vector of lengths at stocking, in order of the corresponding ages.}
 
-\item{\code{stock_density}}{A vector of stocking density,  in order of the corresponding ages. (Multiple years)?}
+\item{\code{stock_density}}{A vector of stocking density,  in order of the corresponding ages.}
 
 \item{\code{bag_limit}}{The daily bag limit (per day) used to calculated the probability of harvesting.}
 

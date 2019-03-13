@@ -7,16 +7,16 @@
 #' @docType class
 #'
 #' @slot Lake Name of lake.
-#' @slot Year A vector of years.
+#' @slot Year Year of survey.
 #' @slot Length_bin A vector of midpoints of the length bins. Width of all length bins assumed to be equal.
-#' @slot Age A vector of integer ages.
+#' @slot Age A vector of integer ages. Should be consecutive from 1 to the maximum age.
 #' @slot Age_adjust A vector of accumulated growing degree days (converted to years) corresponding to the integer ages.
 #' @slot Length A vector (single year sample) for the length composition data. The vector should be of
 #' length equal to \code{length(Length_bins)}.
 #' @slot Age_length A matrix (single year sample) for the age-length sammples. The matrix should have
 #' \code{length(Age)} rows and \code{length(Length_bins)} columns.
-#' @slot L_stock A vector of lengths at stocking, in order of the corresponding ages. (Multiple years)?
-#' @slot stock_density A vector of stocking density,  in order of the corresponding ages. (Multiple years)?
+#' @slot L_stock A vector of lengths at stocking, in order of the corresponding ages.
+#' @slot stock_density A vector of stocking density,  in order of the corresponding ages.
 #' @slot bag_limit The daily bag limit (per day) used to calculated the probability of harvesting.
 #' @slot M_release The assumed mortality from catch and release.
 #' @slot prior_Linf Von Bertalanffy asymptotic length. Vector of length two for mean and standard deviation, respectively.
@@ -162,8 +162,8 @@ setMethod("plot", signature(x = "RBfit", y = "missing"),
               plot_length(x@RBdata, x)
               plot_age_length_residual(x, bubble = bubble)
               plot_length_residual(x)
-              plot_F_diagnostic(x)
               plot_selectivity(x)
+              plot_F_diagnostic(x)
               mtext(paste0("Model fit for ", Lake_name), outer = TRUE, side = 3, font = 2)
             }
 
@@ -231,5 +231,5 @@ setMethod("plot", signature(x = "stanfit", y = "stanfit"),
           })
 
 
-setGeneric("report", function(x, y) standardGeneric("report"))
+setGeneric("report", function(x, y, ...) standardGeneric("report"))
 

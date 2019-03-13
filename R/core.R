@@ -5,9 +5,9 @@
 #' @examples
 #' data(BC_lakes)
 #'
-#' plot(BC_lakes[[1]]) # Plot data
+#' plot(BC_lakes[[69]]) # Plot data
 #'
-#' mod <- fit_model(BC_lakes[[1]]) # Run model
+#' mod <- fit_model(BC_lakes[[69]]) # Run model
 #' plot(mod) # View model results
 NULL
 
