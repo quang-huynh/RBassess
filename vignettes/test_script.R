@@ -30,7 +30,7 @@ plot(res_mcmc, res_pr)
 dev.off()
 
 # MCMC summary table
-write.csv(summary(res_mcmc)[[1]][-11, c(1, 3)], file = "vignettes/figures/mcmc_summary.csv")
+write.csv(summary(res_mcmc)[-11, ], file = "vignettes/figures/mcmc_summary.csv")
 
 pars <- c("Linf", "K", "CV_Len", "M", "Effort", "q", "GN_SL50", "GN_gamma", "angler_SL50", "angler_gamma",
           "F", "p_harvest")

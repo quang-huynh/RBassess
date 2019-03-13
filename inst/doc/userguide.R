@@ -31,7 +31,7 @@ summary(model)
 #  summary(samps)
 
 ## ----echo = FALSE--------------------------------------------------------
-res <- read.csv('mcmc_summary.csv')
+res <- read.csv('figures/mcmc_summary.csv')
 
 res_show <- res[, -1]
 rownames(res_show) <- res[, 1]

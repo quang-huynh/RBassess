@@ -12,7 +12,7 @@
 
 <meta name="author" content="by Quang C. Huynh q.huynh@oceans.ubc.ca" />
 
-<meta name="date" content="2019-03-12" />
+<meta name="date" content="2019-03-13" />
 
 <title>Description of assessment model</title>
 
@@ -214,7 +214,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Description of assessment model</h1>
 <h4 class="author"><em>by Quang C. Huynh <a href="mailto:q.huynh@oceans.ubc.ca">q.huynh@oceans.ubc.ca</a></em></h4>
-<h4 class="date"><em>2019-03-12</em></h4>
+<h4 class="date"><em>2019-03-13</em></h4>
 
 
 <div id="TOC">
@@ -241,9 +241,9 @@ h1 { /* Header 1 */
 </div>
 <div id="population-model" class="section level1">
 <h1><span class="header-section-number">2</span> Population model</h1>
-<p>Selectivity <span class="math inline">\(v\)</span> is both the anglers (indicating past mortality) and the gillnet () are assumed to be logistic and size-specific, parameterized as <span class="math display">\[v^{AN}_{\ell} = [1 + \exp(-\gamma^{AN}\{\ell - h^{AN}\})]^{-1} \]</span> and <span class="math display">\[v^{GN}_{\ell} = [1 + \exp(-\gamma^{GN}\{\ell - h^{GN}\})]^{-1}, \]</span> where <span class="math inline">\(\gamma\)</span> is the slope of the logistic curve at 50% selectivity, <span class="math inline">\(h\)</span> is the length at 50% selectivity, and the superscript indexes type (<span class="math inline">\(AN\)</span> = angler and <span class="math inline">\(GN\)</span> = gillnet).</p>
+<p>Selectivity <span class="math inline">\(v\)</span> of the anglers and the survey gillnet is assumed to be logistic and size-specific, parameterized as <span class="math display">\[v^{AN}_{\ell} = [1 + \exp(-\gamma^{AN}\{\ell - h^{AN}\})]^{-1} \]</span> and <span class="math display">\[v^{GN}_{\ell} = [1 + \exp(-\gamma^{GN}\{\ell - h^{GN}\})]^{-1}, \]</span> where <span class="math inline">\(\gamma\)</span> is the slope of the logistic curve at 50% selectivity, <span class="math inline">\(h\)</span> is the length at 50% selectivity, and the superscript indexes type (<span class="math inline">\(AN\)</span> = angler and <span class="math inline">\(GN\)</span> = gillnet).</p>
 <p>The population abundance of length <span class="math inline">\(\ell\)</span> and age <span class="math inline">\(a\)</span> is given by <span class="math display">\[N_{\ell,a} = R_{\ell,a}\exp(-\Sigma_{a'=1}^{a-1} [F_{\ell'(a')} + M]),\]</span> where <span class="math inline">\(M\)</span> is the instantaneous natural mortality rate, <span class="math display">\[R_{\ell,a} = N^{stock}_a \textrm{P}(\ell|a),\]</span> where <span class="math inline">\(N^{stock}_a\)</span> is the stocking density and <span class="math inline">\(R_{\ell,a}\)</span> would be the abundance of animals of length <span class="math inline">\(\ell\)</span> and age <span class="math inline">\(a\)</span> in the absence of mortality, <span class="math display">\[ F_{\ell'(a')} = v_{\ell'(a')}^{AN} F,\]</span> where <span class="math inline">\(F\)</span> is the apical instantaneous fishing mortality rate, and <span class="math display">\[\ell'(a') = \frac{\ell}{L_a}L_{a'}.\]</span></p>
-<p>Equation 6 calculates the current abundance of the age-<span class="math inline">\(a\)</span> cohort as a function of cumulative fishing pressure from previous ages <span class="math inline">\(a' = 1, \ldots, a-1\)</span>. Since selectivity is size-based, animals in a cohort may not experience equal magnitudes of fishing mortality over time. We assume larger animals in the cohort remain proportionally large (relative to <span class="math inline">\(L_{a}\)</span>) for the duration of entirety of the cohort’s lifespan (and smaller animals remain proportionally small). The summation in Equation 6 accounts for this phenomenon when calculating historical fishing mortality experienced by animals currently of length <span class="math inline">\(\ell\)</span> and age <span class="math inline">\(a\)</span> through Equation 9. In other words, Equation 9 calculates the length <span class="math inline">\(\ell'\)</span> that a fish at current length <span class="math inline">\(\ell\)</span> had been at age <span class="math inline">\(a'\)</span>, and angler selectivity is calculated accordingly.</p>
+<p>Equation 6 calculates the current abundance of the age-<span class="math inline">\(a\)</span> cohort as a function of cumulative fishing pressure from previous ages <span class="math inline">\(a' = 1, \ldots, a-1\)</span>. Since selectivity is size-based, animals in a cohort may not experience equal magnitudes of fishing mortality over time. We assume larger animals in the cohort remain proportionally large (relative to <span class="math inline">\(L_{a}\)</span>) for the entirety of the cohort’s lifespan (and smaller animals remain proportionally small). The summation in Equation 6 accounts for this phenomenon when calculating historical fishing mortality. In other words, Equation 9 calculates a fish at current length <span class="math inline">\(\ell\)</span> had been length <span class="math inline">\(\ell'\)</span> at age <span class="math inline">\(a'\)</span>, so that angler selectivity can be calculated accordingly in Equation 8.</p>
 </div>
 <div id="iterative-solution-for-f" class="section level1">
 <h1><span class="header-section-number">3</span> Iterative solution for F</h1>

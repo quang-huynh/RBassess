@@ -40,7 +40,7 @@ $$\textrm{P}(\ell|a) = \frac{1}{\sigma_a\sqrt{2\pi}}\int_{\ell-d}^{\ell+d}\exp\l
 where $d$ is the half the width of the length bin.
 
 # Population model
-Selectivity $v$ is both the anglers (indicating past mortality) and the gillnet () are assumed to be logistic and size-specific, parameterized as
+Selectivity $v$ of the anglers and the survey gillnet is assumed to be logistic and size-specific, parameterized as
 $$v^{AN}_{\ell} = [1 + \exp(-\gamma^{AN}\{\ell - h^{AN}\})]^{-1} $$
 and 
 $$v^{GN}_{\ell} = [1 + \exp(-\gamma^{GN}\{\ell - h^{GN}\})]^{-1}, $$
@@ -55,7 +55,7 @@ $$ F_{\ell'(a')} = v_{\ell'(a')}^{AN} F,$$
 where $F$ is the apical instantaneous fishing mortality rate, and
 $$\ell'(a') = \frac{\ell}{L_a}L_{a'}.$$
 
-Equation 6 calculates the current abundance of the age-$a$ cohort as a function of cumulative fishing pressure from previous ages $a' = 1, \ldots, a-1$. Since selectivity is size-based, animals in a cohort may not experience equal magnitudes of fishing mortality over time. We assume larger animals in the cohort remain proportionally large (relative to $L_{a}$) for the duration of entirety of the cohort's lifespan (and smaller animals remain proportionally small). The summation in Equation 6 accounts for this phenomenon when calculating historical fishing mortality experienced by animals currently of length $\ell$ and age $a$ through Equation 9. In other words, Equation 9 calculates the length $\ell'$ that a fish at current length $\ell$ had been at age $a'$, and angler selectivity is calculated accordingly.
+Equation 6 calculates the current abundance of the age-$a$ cohort as a function of cumulative fishing pressure from previous ages $a' = 1, \ldots, a-1$. Since selectivity is size-based, animals in a cohort may not experience equal magnitudes of fishing mortality over time. We assume larger animals in the cohort remain proportionally large (relative to $L_{a}$) for the entirety of the cohort's lifespan (and smaller animals remain proportionally small). The summation in Equation 6 accounts for this phenomenon when calculating historical fishing mortality. In other words, Equation 9 calculates a fish at current length $\ell$ had been length $\ell'$ at age $a'$, so that angler selectivity can be calculated accordingly in Equation 8.
 
 # Iterative solution for F
 

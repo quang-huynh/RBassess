@@ -35,7 +35,7 @@ data_object <- BC_lakes[[69]]
 
 # Introduction
 
-This package is a stock assessment model primarily intended for rainbow trout (*Oncorhynchus mykiss*) stocked in small lakes in British Columbia, Canada. From an occasional gillnet survey, age and length samples are obtained, from which mortality, growth, and selectivity (assuming equilibrium) could be estimated. It is assumed that the stocking abundance and the length of fish at the time of stocking are known. 
+This package is a stock assessment model primarily intended for rainbow trout (*Oncorhynchus mykiss*) stocked in small lakes in British Columbia, Canada. From an occasional gillnet survey, age and length samples are obtained, from which mortality, growth, and selectivity (assuming equilibrium) could be estimated. It is assumed that the stocking abundance and the mean length of fish at the time of stocking are known. 
 
 This vignette provides a summary of the available features for fitting the model to data, along with an example application.
 
@@ -45,7 +45,7 @@ The description of the assessment model can be obtained [here](assess.html).
 
 # Importing data
 
-The data can be imported into the package through a single S4 object of class `RBdata`.
+The data from the stocking and the survey can be imported into the package through a single S4 object of class `RBdata`.
 ```{r, eval = FALSE}
 data_object <- new("RBdata")
 ```
@@ -53,7 +53,7 @@ The necessary entries and formats for data in the `RBdata` object can be found i
 
 - Either a vector of length comps (with corresponding midpoints of the length bins) or a matrix of age-length data (with length bins and integer ages)
 - Lengths at stocking for each age in the model
-- Accumulated growing degree days for each age in the model
+- Accumulated growing degree days converted to years for each age in the model
 - Bag limit
 - Release mortality
 - Priors for: growth parameters (Linf, K, CV), natural mortality, effort, catchability, gillnet selectivity, angler selectivity
@@ -90,11 +90,11 @@ plot(model)
 
 The first plot shows fits to the data, along with residuals. In this dataset, there were 206 age-length samples and 172 length samples. The first row shows the observed data (grey) as well as predicted model fits (red). The second row shows the residuals from the corresponding column in the first row. The left column in the third row shows the estimated selectivity of the gillnet survey and of the anglers.
 
-Finally, the right column of the third row shows a convergence diagnostic for fishing mortality (F). In the model, F is solved iteratively (see the [model description](assess.html)). The value of F should stabilize as the iterations increase. By default, five iterations (for each evaluation of the likelihood function) is used to solve for F. Otherwise, more iterations may be needed and can be done by increaseing the value of the `nit_harvest` argument in the `fit_model` function.
+Finally, the right column of the third row shows a convergence diagnostic for fishing mortality (F). In the model, F is solved iteratively (see the [model description](assess.html)). The value of F should stabilize as the iterations increase. By default, five iterations (for each evaluation of the likelihood function) is used to solve for F. Otherwise, more iterations may be needed and can be done by increasing the value of the `nit_harvest` argument in the `fit_model` function.
 
 <img src="figures/posterior_mode.png" width = 700>
 
-This next figure shows the priors and posterior mean from the model. The distributions for the parameters are stylized. A lognormal distribution is shown for the prior given the standard deviation from the `RBdata` object while a normal approximation is shown for the posterior given the standard deviation from the estimated Hessian matrix.
+This next figure shows the priors and posterior mean from the model. The distributions for the parameters are stylized. A lognormal distribution is shown for the prior given the standard deviation from the `RBdata` object while a normal approximation is shown for the posterior taken from the Hessian matrix.
 
 From the two figures above, the model is estimating a very high F, but only for the largest animals in the population. The anglers seem to only be fishing hard for and keeping all of the largest animals, which could indicate a trophy fishery in this lake. This is based on the complete absence of animals larger than 50 cm in the survey. Growth parameters appear to be well estimated from the data, based on the low variance of the Linf, K, and CV posteriors compared to their respective priors.
 
@@ -108,14 +108,14 @@ summary(samps)
 MCMC specifications such as the number of iterations for thinning and warmup are specified in `run_mcmc`. Here are the posterior means and standard deviations from our model:
 
 ```{r echo = FALSE}
-res <- read.csv('mcmc_summary.csv')
+res <- read.csv('figures/mcmc_summary.csv')
 
 res_show <- res[, -1]
 rownames(res_show) <- res[, 1]
 round(res_show, 2)
 ```
 
-All diagnostic plots available in `rstan` can be used here. For example, we can get a trace plot from our MCMC chain:
+All diagnostic plots available in `rstan` can be used here. For example, we can get a trace plot for our MCMC chains:
 ```{r eval = FALSE}
 rstan::stan_trace(samps)
 ```
@@ -146,5 +146,6 @@ report(samps)
 
 # Acknowledgements
 
-Work on this package was funded by a contract from the Ministry of Environment of the Province of British Columbia.
+Work on this package was funded by a contract from the Freshwater Fisheries Society of British Columbia.
 
+[<img src="figures/logo.png" width=350>](https://www.gofishbc.com)
