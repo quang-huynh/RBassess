@@ -1,6 +1,6 @@
 ---
 title: "Description of assessment model"
-author: "Quang C. Huynh"
+author: "by Quang C. Huynh <q.huynh@oceans.ubc.ca>"
 date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette: 
@@ -28,12 +28,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Introduction
-
-This package is a stock assessment model primarily intended for rainbow trout (*Oncorhynchus mykiss*) stocked in small lakes in British Columbia, Canada. From an occasional gillnet survey, age and length samples are obtained, from which mortality and growth (assuming equilibrium) could be estimated. It is assumed that the stocking abundance and the length of fish at the time of stocking are known. 
-
-# Model description
-## Growth
+# Growth
 Growth is assumed to follow a re-parameterized von Bertalanffy function where the mean length at age $a$ ($L_a$) at the time of the survey is:
 $$L_a = \tilde{L}_{a} \exp(-K \Delta_a) + L_{\infty}(1 - \exp(-K \Delta_a)),$$
 where $\tilde{L}_{a}$ is the mean length of the cohort currently of age $a$ at the time of stocking, $L_{\infty}$ is the mean asymptotic length, $K$ is the von Bertalanffy growth coefficient, and $\Delta_a$ is the accumulated degree days (converted to years) experienced by the cohort of age $a$.
@@ -44,7 +39,7 @@ Thus, probability of a fish to be within a length bin of mid-point $\ell$ at age
 $$\textrm{P}(\ell|a) = \frac{1}{\sigma_a\sqrt{2\pi}}\int_{\ell-d}^{\ell+d}\exp\left(\frac{(L_a - x)^2}{2\sigma_a^2}\right)dx,$$
 where $d$ is the half the width of the length bin.
 
-## Population model
+# Population model
 Selectivity $v$ is both the anglers (indicating past mortality) and the gillnet () are assumed to be logistic and size-specific, parameterized as
 $$v^{AN}_{\ell} = [1 + \exp(-\gamma^{AN}\{\ell - h^{AN}\})]^{-1} $$
 and 
@@ -60,15 +55,9 @@ $$ F_{\ell'(a')} = v_{\ell'(a')}^{AN} F,$$
 where $F$ is the apical instantaneous fishing mortality rate, and
 $$\ell'(a') = \frac{\ell}{L_a}L_{a'}.$$
 
-Equation 6 calculates the current abundance of the age-$a$ cohort as a function of cumulative fishing pressure from previous ages $a' = 1, \cdots, a-1$. Since selectivity is size-based, animals in a cohort may not experience equal magnitudes of fishing mortality over time. We assume larger animals in the cohort remain proportionally large (relative to $L_{a}$) for the duration of entirety of the cohort's lifespan (and smaller animals remain proportionally small). The summation in Equation 6 accounts for this phenomenon when calculating historical fishing mortality experienced by animals currently of length $\ell$ and age $a$ through Equation 9. In other words, Equation 9 calculates the length $\ell'$ that a fish at current length $\ell$ had been at age $a'$, and angler selectivity is calculated accordingly.
+Equation 6 calculates the current abundance of the age-$a$ cohort as a function of cumulative fishing pressure from previous ages $a' = 1, \ldots, a-1$. Since selectivity is size-based, animals in a cohort may not experience equal magnitudes of fishing mortality over time. We assume larger animals in the cohort remain proportionally large (relative to $L_{a}$) for the duration of entirety of the cohort's lifespan (and smaller animals remain proportionally small). The summation in Equation 6 accounts for this phenomenon when calculating historical fishing mortality experienced by animals currently of length $\ell$ and age $a$ through Equation 9. In other words, Equation 9 calculates the length $\ell'$ that a fish at current length $\ell$ had been at age $a'$, and angler selectivity is calculated accordingly.
 
-## Observed lengths and ages
-The observed numbers at length and age from the survey $N^{GN}_{\ell,a}$ is
-$$N^{GN}_{\ell,a} = v^{GN}_{\ell} N_{\ell,a},$$
-and the numbers at length is calculated as:
-$$N^{GN}_{\ell} = \Sigma_a N^{GN}_{\ell,a}.$$
-
-## Iterative solution for F
+# Iterative solution for F
 
 Fishing mortality is influenced by direct harvest of fish, subject to total fishing effort, capture efficency, voluntary release, and regulations (e.g. bag limits). We assume $F$ also includes release mortality for fish returned to the water through voluntary or regulated release due to bag limits. 
 
@@ -76,59 +65,32 @@ From an estimate of effort $E$, catchability $q$, and the probability of harvest
 $$F = qE[p_h + (1 - p_h)F^{release}].$$
 We usually don't have $p_h$ but rather the bag limit $b_{lim}$. To calculate $p_h$ from the bag limit $b_{lim}$, we first calculate the expected catch in length and age based on the Baranov equation and an initial value of $F$, 
 $$ C_{\ell,a}= \frac{v^{AN}_{\ell} F}{v^{AN}_{\ell} F+M} N_{\ell,a} [1 - \exp(-v^{AN}_{\ell} F-M)] .$$
-The expected $CPUE$ based on population abundance, catchability, and effort is
-$$CPUE = q\frac{\Sigma_{\ell}\Sigma_{a} C_{\ell, a}}{E}.$$
-Next, the expected value of the CPUE subject to the bag limit ($CPUE | b_{lim}$) is calculated. If the CPUE of retained catch for individual anglers is a Poisson random variable with rate parameter $\lambda = CPUE$, then $CPUE|b_{lim}$ is calculated as:
-$$CPUE|b_{lim} = \Sigma_x g(x) f(x) $$
+The expected $CPUE$ is
+$$CPUE = \frac{\Sigma_{\ell}\Sigma_{a} C_{\ell, a}}{E}.$$
+Next, the expected value of the CPUE (pertaining to retained catch) subject to the bag limit ($CPUE | b_{lim}$) is calculated. If the CPUE for individual anglers is a Poisson random variable with rate parameter $\lambda = CPUE$, then $CPUE|b_{lim}$ can be calculated as:
+$$CPUE|b_{lim} = \Sigma_x g(x) f(x;\lambda) $$
 where
-$$ g(x) = min(x, b_{lim}),$$
-and $f(x)$ is the probability density function for a Poisson random variable,
-$$ f(x) = \exp(-CPUE) \frac{CPUE^x}{x!},$$
-with $x = 0, 1, 2, \cdots$. Generally, the summation is stopped at some arbitrarily large number (e.g. 20).
+$$ g(x) = \textrm{min}(x, b_{lim}),$$
+and $f(x;\lambda)$ is the probability density function for a Poisson random variable,
+$$ f(x;\lambda) = \exp(-\lambda) \frac{\lambda^x}{x!},$$
+with $x = 0, 1, 2, \ldots$. Generally, the summation is stopped at some arbitrarily large number (e.g., 20).
 
 Then, the probabilty of harvest $p_h$ is
 $$p_h = \frac{CPUE|b_{lim}}{CPUE}.$$
-From a starting value of $p_h$, $F$ is solved iteratively through Equations 12-18 until the value stabilizes (often at 5 iterations or fewer).
+From a starting value of $p_h$, $F$ is solved iteratively through Equations 10-16 until the value stabilizes (often at 5 iterations or fewer).
 
 
-## Vignette Info
+# Likelihood
 
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
+In the model, the numbers at length and age from the survey $N^{GN}_{\ell,a}$ is calculated as
+$$N^{GN}_{\ell,a} = v^{GN}_{\ell} N_{\ell,a},$$
 
-## Styles
+Assuming a multinomial distribution, the log-likelihood ($\Lambda_1$) for a random sample of length-age observationss is
+$$\Lambda_1 = O_{\ell,a} \log\left(\dfrac{N^{GN}_{\ell,a}}{\Sigma_{\ell}\Sigma_a N^{GN}_{\ell,a}}\right),$$
+where $O$ is the observed numbers in the sample.
 
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
+The observed numbers at length is calculated as:
+$$N^{GN}_{\ell} = \Sigma_a N^{GN}_{\ell,a}.$$
+The likelihood $\Lambda_2$ for a random sample of lengths is
+$$\Lambda_2 = O_{\ell} \log\left(\dfrac{N^{GN}_{\ell}}{\Sigma_{\ell}N^{GN}_{\ell}}\right).$$
 
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
-
-## Figures
-
-The figure sizes have been customised so that you can easily put two images side-by-side. 
-
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
-```
-
-You can enable figure captions by `fig_caption: yes` in YAML:
-
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
-
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
-
-## More Examples
-
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
-```
-
-Also a quote using `>`:
-
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))

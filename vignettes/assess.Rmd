@@ -65,8 +65,8 @@ From an estimate of effort $E$, catchability $q$, and the probability of harvest
 $$F = qE[p_h + (1 - p_h)F^{release}].$$
 We usually don't have $p_h$ but rather the bag limit $b_{lim}$. To calculate $p_h$ from the bag limit $b_{lim}$, we first calculate the expected catch in length and age based on the Baranov equation and an initial value of $F$, 
 $$ C_{\ell,a}= \frac{v^{AN}_{\ell} F}{v^{AN}_{\ell} F+M} N_{\ell,a} [1 - \exp(-v^{AN}_{\ell} F-M)] .$$
-The expected $CPUE$ based on population abundance, catchability, and effort is
-$$CPUE = q\frac{\Sigma_{\ell}\Sigma_{a} C_{\ell, a}}{E}.$$
+The expected $CPUE$ is
+$$CPUE = \frac{\Sigma_{\ell}\Sigma_{a} C_{\ell, a}}{E}.$$
 Next, the expected value of the CPUE (pertaining to retained catch) subject to the bag limit ($CPUE | b_{lim}$) is calculated. If the CPUE for individual anglers is a Poisson random variable with rate parameter $\lambda = CPUE$, then $CPUE|b_{lim}$ can be calculated as:
 $$CPUE|b_{lim} = \Sigma_x g(x) f(x;\lambda) $$
 where
