@@ -3,6 +3,8 @@ doc
 .Rhistory
 .RData
 .Ruserdata
+src/*.dll
+src/*.o
 Workfile
 src-i386
 src-x64
