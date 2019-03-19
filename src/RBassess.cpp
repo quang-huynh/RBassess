@@ -52,7 +52,8 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(stocking_density);
   DATA_VECTOR(L_stock);
   DATA_SCALAR(bag_limit);
-  DATA_SCALAR(M_release);
+  DATA_SCALAR(release_mortality);
+  DATA_SCALAR(p_vrel);
   DATA_SCALAR(init_p_harvest);
   DATA_INTEGER(nit_harvest);
 
@@ -115,7 +116,7 @@ Type objective_function<Type>::operator() ()
 
   // Initial value for F and iterate over j to solve for F
   vector<Type> F_vec(nit_harvest);
-  F_vec(0) = q * Effort * (init_p_harvest + (1 - init_p_harvest) * M_release);
+  F_vec(0) = q * Effort * (init_p_harvest + (1 - init_p_harvest) * release_mortality);
   for(int j=1;j<nit_harvest;j++) {
 
     for(int a=0;a<n_age;a++) {
@@ -137,19 +138,22 @@ Type objective_function<Type>::operator() ()
     }
     CPUE = Cat.sum()/Effort;
 
-    // Calculate retention rate from CPUE subject to bag limit
+    // Calculate retention rate from CPUE subject to bag limit and voluntary release
     p_harvest = 0;
     for(int i=0;i<=20;i++) {
       Type x = i;
-      Type max_x = CppAD::CondExpGt(x, bag_limit, bag_limit, x);
+      Type max_x = CppAD::CondExpGt(x * (1 - p_vrel), bag_limit, bag_limit, x * (1 - p_vrel));
       p_harvest += max_x * exp(-CPUE) * pow(CPUE, x)/exp(lfactorial(x));
     }
     p_harvest /= CPUE;
 
     // New value for F in the j-th iteration
-    F_vec(j) = q * Effort * (p_harvest + (1 - p_harvest) * M_release);
+    F_vec(j) = q * Effort * (p_harvest + (1 - p_harvest) * release_mortality);
   }
+
   Type F = F_vec(nit_harvest-1);
+  Type F_retain = q * Effort * p_harvest;
+  Type F_release = F - F_retain;
 
   // Negative log prior density
   Type neg_log_prior = 0;
@@ -195,6 +199,8 @@ Type objective_function<Type>::operator() ()
   ADREPORT(CPUE);
 
   REPORT(F_vec);
+  REPORT(F_retain);
+  REPORT(F_release);
 
   REPORT(Len_age);
   REPORT(Linf);

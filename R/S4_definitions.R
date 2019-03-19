@@ -18,7 +18,8 @@
 #' @slot L_stock A vector of mean lengths at stocking, in order of the corresponding ages.
 #' @slot stock_density A vector of stocking density, in order of the corresponding ages. In units of numbers per hectacre.
 #' @slot bag_limit The daily bag limit (number of fish per angler day) used to calculated the probability of harvesting.
-#' @slot M_release The assumed instantaneous mortality rate (per year) from catch and release.
+#' @slot release_mortality Release mortality, i.e., the proportion of fish that die due to catch and release. Default is 0.1.
+#' @slot p_vrel The proportion of fish caught by anglers that are subsequently voluntarily released. Default is zero.
 #' @slot prior_Linf Von Bertalanffy asymptotic length. Vector of length two for mean and standard deviation, respectively.
 #' @slot prior_K Von Bertalanffy growth coefficient. Vector of length two for mean and standard deviation, respectively.
 #' @slot prior_CV_Len Coefficient in variation in length-at-age. Vector of length two for mean and standard deviation, respectively.
@@ -43,7 +44,7 @@
 RBdata <- setClass("RBdata",
                    slots = c(Lake = "character", Year = "numeric", Length_bin = "vector", Age = "vector", Age_adjust = "vector",
                              Length = "vector", Age_length = "matrix", L_stock = "vector",
-                             stock_density = "vector", bag_limit = "numeric", M_release = "numeric",
+                             stock_density = "vector", bag_limit = "numeric", release_mortality = "numeric", p_vrel = "numeric",
                              prior_Linf = "numeric", prior_K = "numeric", prior_CV_Len = "numeric", prior_M = "numeric",
                              prior_Effort = "numeric", prior_q = "numeric", prior_GN_SL50 = "numeric", prior_GN_gamma = "numeric",
                              prior_angler_SL50 = "numeric", prior_angler_gamma = "numeric"))
@@ -76,7 +77,15 @@ setMethod("initialize", "RBdata",
                 names_default_prior <- c(names_default_prior, names(default_prior)[i])
               }
             }
-            if(!silent && !is.null(names_default_prior)) message("Default values used for:\n", paste(names_default_prior, collapse = "\n"))
+
+            if(!silent) {
+              if(!is.null(names_default_prior)) message("Default values used for:\n", paste(names_default_prior, collapse = "\n"))
+              if(length(.Object@p_vrel) == 0) message("p_vrel set to 0")
+              if(length(.Object@release_mortality) == 0) message("Release mortality set to 0.1")
+            }
+
+            if(length(.Object@p_vrel) == 0) .Object@p_vrel <- 0
+            if(length(.Object@release_mortality) == 0) .Object@release_mortality <- 0.1
             .Object
           })
 

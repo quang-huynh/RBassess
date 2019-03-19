@@ -1,10 +1,13 @@
 Package: RBassess
-Title: An Age- and Length-based Assessment Model for Rainbow Trout in British Columbia, Canada
+Title: An Age- And Length-Based Assessment Model for Rainbow Trout in British Columbia, Canada
+Description: A stock assessment model is provided and primarily intended for rainbow trout (Oncorhynchus mykiss) 
+  stocked in small lakes in British Columbia, Canada. From an occasional gillnet survey, age and length samples are 
+  obtained, from which mortality, growth, and selectivity (assuming equilibrium) could be estimated. Estimation and
+  MCMC sampling routines are provided, as well as reporting of assessment output.
 Version: 0.0.0.9000
 Author: person("Quang", "Huynh", email = "q.huynh@oceans.ubc.ca", role = c("aut", "cre"))
 Date: 2019-03-12
 Maintainer: Quang Huynh <q.huynh@oceans.ubc.ca>
-Description: Description here.
 License: GPL-3
 Depends:
   R (>= 3.3.0), tmbstan

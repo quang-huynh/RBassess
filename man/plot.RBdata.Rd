@@ -3,9 +3,9 @@
 \docType{methods}
 \name{plot.RBdata}
 \alias{plot.RBdata}
-\alias{plot,RBfit,missing-method}
+\alias{plot,RBfit,ANY-method}
 \alias{plot.RBfit}
-\alias{plot,stanfit,missing-method}
+\alias{plot,stanfit,ANY-method}
 \alias{plot.stanfit}
 \alias{plot,stanfit,stanfit-method}
 \title{\code{plot} methods for S4 classes in \code{RBassess} package}
@@ -13,10 +13,10 @@
 \S4method{plot}{RBdata,ANY}(x, bubble = 7, data = TRUE, prior = TRUE,
   ...)
 
-\S4method{plot}{RBfit,missing}(x, bubble = 7, diagnostic = TRUE,
+\S4method{plot}{RBfit,ANY}(x, bubble = 7, diagnostic = TRUE,
   posterior = TRUE, ...)
 
-\S4method{plot}{stanfit,missing}(x, y, ...)
+\S4method{plot}{stanfit,ANY}(x, y, ...)
 
 \S4method{plot}{stanfit,stanfit}(x, y, ...)
 }
@@ -48,7 +48,7 @@ plot(BC_lakes[[1]])
 
 ###### Run model
 mod <- fit_model(BC_lakes[[1]])
-plot(mode)
+plot(mod)
 
 \donttest{
 ###### Run MCMC

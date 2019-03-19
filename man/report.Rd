@@ -3,17 +3,19 @@
 \docType{methods}
 \name{report}
 \alias{report}
-\alias{report,RBfit,missing-method}
+\alias{report,RBfit-method}
 \title{HTML report for assessment model}
 \usage{
 report(x, y, ...)
 
-\S4method{report}{RBfit,missing}(x, dir = tempdir(), author = NULL,
+\S4method{report}{RBfit}(x, dir = tempdir(), author = NULL,
   bubble = 7, ...)
 }
 \arguments{
 \item{x}{An object of class \code{RBfit} returned from \link{fit_model} or class \code{stanfit}
 returned from \link{run_mcmc}.}
+
+\item{y}{An optional object of class \code{stanfit} which only sampled the priors.}
 
 \item{dir}{The directory for saving the HTML document.}
 

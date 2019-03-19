@@ -20,6 +20,8 @@
 
 \item{digits}{The number of decimal places for rounding. Use \code{NA} for no rounding.}
 
+\item{...}{Additional arguments}
+
 \item{full}{Logical, returns more information for a stanfit object: posterior quantiles, Rhat, and effective sample size.}
 }
 \value{

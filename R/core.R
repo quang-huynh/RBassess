@@ -52,8 +52,9 @@ fit_model <- function(RBdata, start = NULL, nit_harvest = 5L, use_priors = TRUE,
 
   model_data <- list(Len_data = RBdata@Length, Len_age_data = RBdata@Age_length, age_adjust = RBdata@Age_adjust,
                      Lmid = RBdata@Length_bin, Lbin_width = unique(diff(RBdata@Length_bin)), stocking_density = RBdata@stock_density,
-                     L_stock = RBdata@L_stock, bag_limit = RBdata@bag_limit, M_release = RBdata@M_release, use_likelihood = as.integer(TRUE),
-                     use_priors = as.integer(use_priors), init_p_harvest = if(!is.null(start$p_harvest)) start$p_harvest else 0.5, nit_harvest = nit_harvest)
+                     L_stock = RBdata@L_stock, bag_limit = RBdata@bag_limit, release_mortality = RBdata@release_mortality,
+                     p_vrel = RBdata@p_vrel, use_likelihood = as.integer(TRUE), use_priors = as.integer(use_priors),
+                     init_p_harvest = if(!is.null(start$p_harvest)) start$p_harvest else 0.5, nit_harvest = nit_harvest)
 
   model_priors <- generate_priors(RBdata)
 

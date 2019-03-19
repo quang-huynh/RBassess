@@ -33,7 +33,9 @@ length equal to \code{length(Length_bins)}.}
 
 \item{\code{bag_limit}}{The daily bag limit (number of fish per angler day) used to calculated the probability of harvesting.}
 
-\item{\code{M_release}}{The assumed instantaneous mortality rate (per year) from catch and release.}
+\item{\code{release_mortality}}{Release mortality, i.e., the proportion of fish that die due to catch and release. Default is 0.1.}
+
+\item{\code{p_vrel}}{The proportion of fish caught by anglers that are subsequently voluntarily released. Default is zero.}
 
 \item{\code{prior_Linf}}{Von Bertalanffy asymptotic length. Vector of length two for mean and standard deviation, respectively.}
 

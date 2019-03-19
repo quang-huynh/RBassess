@@ -55,30 +55,35 @@ $$ F_{\ell'(a')} = v_{\ell'(a')}^{AN} F,$$
 where $F$ is the apical instantaneous fishing mortality rate, and
 $$\ell'(a') = \frac{\ell}{L_a}L_{a'}.$$
 
-Equation 6 calculates the current abundance of the age-$a$ cohort as a function of cumulative fishing pressure from previous ages $a' = 1, \ldots, a-1$. Since selectivity is size-based, animals in a cohort may not experience equal magnitudes of fishing mortality over time. We assume larger animals in the cohort remain proportionally large (relative to $L_{a}$) for the entirety of the cohort's lifespan (and smaller animals remain proportionally small). The summation in Equation 6 accounts for this phenomenon when calculating historical fishing mortality. In other words, Equation 9 calculates a fish at current length $\ell$ had been length $\ell'$ at age $a'$, so that angler selectivity can be calculated accordingly in Equation 8.
+Equation 6 calculates the current abundance of the age-$a$ cohort as a function of cumulative fishing pressure from previous ages $a' = 1, \ldots, a-1$. We assume larger animals in the cohort remain proportionally large (relative to $L_{a}$) for the entirety of the cohort's lifespan (and similarly, smaller animals remain proportionally small). Since selectivity is size-based, animals in a cohort may not experience equal magnitudes of fishing mortality over time. The summation in Equation 6 accounts for this phenomenon when calculating historical fishing mortality. In other words, Equation 9 calculates a fish at current length $\ell$ to have been length $\ell'$ at age $a'$, and angler selectivity is calculated accordingly in Equation 8.
 
 # Iterative solution for F
 
-Fishing mortality is influenced by direct harvest of fish, subject to total fishing effort, capture efficency, voluntary release, and regulations (e.g. bag limits). We assume $F$ also includes release mortality for fish returned to the water through voluntary or regulated release due to bag limits. 
+Fishing mortality $F$ includes a component for retention $F^{retain}$ and mortality from catch-and-release $F^{release}$,
+$$F = F^{retain} + F^{release}.$$
+Total fishing effort, capture efficency, voluntary release, and regulations (i.e., bag limits) affect F. From estimates of effort $E$, catchability $q$, and the probability of harvest $p_h$, and release mortality $m_{rel}$ (proportion of fish that die from catch-and-release), fishing mortality rates $F^{retain}$ and $F^{release}$ are calculated as:
+$$F^{retain} = qEp_h,$$
+and
+$$F^{release} = qE(1-p_h)m_{rel}.$$
 
-From an estimate of effort $E$, catchability $q$, and the probability of harvest $p_h$, and release mortality $F_{release}$, fishing mortality is calculated as:
-$$F = qE[p_h + (1 - p_h)F^{release}].$$
-We usually don't have $p_h$ but rather the bag limit $b_{lim}$. To calculate $p_h$ from the bag limit $b_{lim}$, we first calculate the expected catch in length and age based on the Baranov equation and an initial value of $F$, 
+We usually don't have $p_h$ but rather the bag limit $b_{lim}$ and some notion of the rate of voluntary release $p_{vrel}$ by anglers. To calculate $p_h$ from the bag limit and voluntary release, we first calculate the expected catch in length and age $C_{\ell,a}$ based on the population abundance. From the Baranov equation and an initial value of $F$, 
 $$ C_{\ell,a}= \frac{v^{AN}_{\ell} F}{v^{AN}_{\ell} F+M} N_{\ell,a} [1 - \exp(-v^{AN}_{\ell} F-M)] .$$
 The expected $CPUE$ is
 $$CPUE = \frac{\Sigma_{\ell}\Sigma_{a} C_{\ell, a}}{E}.$$
-Next, the expected value of the CPUE (pertaining to retained catch) subject to the bag limit ($CPUE | b_{lim}$) is calculated. If the CPUE for individual anglers is a Poisson random variable with rate parameter $\lambda = CPUE$, then $CPUE|b_{lim}$ can be calculated as:
-$$CPUE|b_{lim} = \Sigma_x g(x) f(x;\lambda) $$
+
+Next, the expected value of the CPUE (pertaining to retained catch) subject to the bag limit and voluntary release ($CPUE | b_{lim},p_{vrel}$) is calculated. If the CPUE for individual anglers is a Poisson random variable with rate parameter $\lambda = CPUE$, then $CPUE|b_{lim},p_{vrel}$ can be calculated as:
+$$CPUE|b_{lim},p_{vrel} = \Sigma_x g(x) f(x;\lambda) $$
 where
-$$ g(x) = \textrm{min}(x, b_{lim}),$$
+$$ g(x) = \textrm{min}(x[1-p_{vrel}], b_{lim}),$$
 and $f(x;\lambda)$ is the probability density function for a Poisson random variable,
 $$ f(x;\lambda) = \exp(-\lambda) \frac{\lambda^x}{x!},$$
-with $x = 0, 1, 2, \ldots$. Generally, the summation is stopped at some arbitrarily large number (e.g., 20).
+with $x = 0, 1, 2, \ldots$. Generally, the summation is stopped at some arbitrarily large number (e.g., 20). 
 
 Then, the probabilty of harvest $p_h$ is
-$$p_h = \frac{CPUE|b_{lim}}{CPUE}.$$
-From a starting value of $p_h$, $F$ is solved iteratively through Equations 10-16 until the value stabilizes (often at 5 iterations or fewer).
+$$p_h = \frac{CPUE|b_{lim},p_{vrel}}{CPUE}.$$
+From a starting value of $p_h$, $F$ is solved iteratively through Equations 10-18 until the value stabilizes (often at 5 iterations or fewer). 
 
+From Equation 16, voluntary release acts upon retention behavior before the bag limit. For example, if the bag limit is 5 fish per day and anglers release half their catch, then then an angler that catches 8 fish would keep four of them.
 
 # Likelihood
 

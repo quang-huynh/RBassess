@@ -7,6 +7,7 @@
 #'
 #' @param x An object of class \code{RBfit} returned from \link{fit_model} or class \code{stanfit}
 #' returned from \link{run_mcmc}.
+#' @param y An optional object of class \code{stanfit} which only sampled the priors.
 #' @param dir The directory for saving the HTML document.
 #' @param author A character string for the author.
 #' @param bubble Numeric for scaling size of bubbles in bubble plot. See \link{plot.RBdata}.
@@ -17,7 +18,7 @@ setGeneric("report", function(x, y, ...) standardGeneric("report"))
 #' @rdname report
 #' @importFrom rmarkdown render
 #' @export
-setMethod("report", signature(x = "RBfit", y = "missing"),
+setMethod("report", signature(x = "RBfit"),
           function(x, dir = tempdir(), author = NULL, bubble = 7, ...) {
             #old_dir <- getwd()
             #on.exit(setwd(old_dir))
@@ -92,7 +93,6 @@ setMethod("report", signature(x = "RBfit", y = "missing"),
             browseURL(file.path(dir, "report.html"))
             invisible()
           })
-
 
 
 

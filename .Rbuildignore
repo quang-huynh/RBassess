@@ -1,6 +1,13 @@
+^doc$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^Workfile$
 ^vignettes/vignette_example.Rdata$
+^vignettes/test_script.R$
 ^.gitignore$
 ^.Rhistory$
+^.travis.yml$
+^src/*.dll$
+^src/*.o$
+^src-i386$
+^src-x64$

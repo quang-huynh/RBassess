@@ -1,7 +1,8 @@
+doc
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
 Workfile
-src/*.dll
-src/*.o
+src-i386
+src-x64

@@ -20,7 +20,7 @@
 #'
 #' ###### Run model
 #' mod <- fit_model(BC_lakes[[1]])
-#' plot(mode)
+#' plot(mod)
 #'
 #' \donttest{
 #' ###### Run MCMC
@@ -70,7 +70,7 @@ setMethod("plot", "RBdata",
 #' @rdname plot.RBdata
 #' @aliases plot.RBfit
 #' @export
-setMethod("plot", signature(x = "RBfit", y = "missing"),
+setMethod("plot", signature(x = "RBfit"),
           function(x, bubble = 7, diagnostic = TRUE, posterior = TRUE, ...) {
             old_par <- par(no.readonly = TRUE)
             on.exit(par(old_par))
@@ -102,7 +102,7 @@ setMethod("plot", signature(x = "RBfit", y = "missing"),
 #' @rdname plot.RBdata
 #' @aliases plot.stanfit
 #' @importClassesFrom rstan stanfit
-setMethod("plot", signature(x = "stanfit", y = "missing"),
+setMethod("plot", signature(x = "stanfit"),
           function(x, ...) {
             Lake_name <- if(nchar(x@.MISC$RBfit@RBdata@Lake) > 0) x@.MISC$RBfit@RBdata@Lake else substitute(x)
             plot_pars(RBdata = x@.MISC$RBfit@RBdata, stan_obj = x, plot.title = paste("Posteriors for", Lake_name), plot_type = "MCMC")
@@ -131,6 +131,7 @@ setMethod("plot", signature(x = "stanfit", y = "stanfit"),
 #' @param description Logical, indicating whether an additional column with parameter descriptions.
 #' @param digits The number of decimal places for rounding. Use \code{NA} for no rounding.
 #' @param full Logical, returns more information for a stanfit object: posterior quantiles, Rhat, and effective sample size.
+#' @param ... Additional arguments
 #' @return A data frame.
 #' @aliases summary.RBfit
 #' @examples
