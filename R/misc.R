@@ -38,8 +38,8 @@ generate_priors <- function(RBdata) {
 }
 
 lognormal_par <- function(x) {
-  x_mean <- x[1]
-  x_sd <- x[2]
+  x_mean <- x[[1]]
+  x_sd <- x[[2]]
 
   lnx_mean <- log(x_mean) - 0.5 * log(1 + (x_sd/x_mean)^2)
   lnx_sd <- sqrt(log(1 + (x_sd/x_mean)^2))

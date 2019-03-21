@@ -10,8 +10,8 @@ Date: 2019-03-12
 Maintainer: Quang Huynh <q.huynh@oceans.ubc.ca>
 License: GPL-3
 Depends:
-  R (>= 3.3.0), tmbstan
-Imports: TMB, grDevices, graphics, methods, rstan, rmarkdown, knitr
+  R (>= 3.3.0)
+Imports: TMB, grDevices, graphics, methods, rstan, rmarkdown, knitr, tmbstan
 LinkingTo: TMB, RcppEigen
 LazyData: yes
 LazyLoad: yes

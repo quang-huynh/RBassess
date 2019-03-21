@@ -58,8 +58,7 @@ fit_model <- function(RBdata, start = NULL, nit_harvest = 5L, use_priors = TRUE,
 
   model_priors <- generate_priors(RBdata)
 
-  obj <- MakeADFun(data = c(model_data, model_priors), parameters = model_par, DLL = "RBassess",
-                   hessian = TRUE, silent = TRUE)
+  obj <- MakeADFun(data = c(model_data, model_priors), parameters = model_par, DLL = "RBassess", hessian = TRUE, silent = TRUE)
 
   if(is.null(lower)) lower <- rep(0, 10)
   if(is.null(upper)) upper <- rep(Inf, 10)
@@ -87,8 +86,6 @@ fit_model <- function(RBdata, start = NULL, nit_harvest = 5L, use_priors = TRUE,
 #' @param upper A vector of the upper bounds of the parameters. This argument overrides the default, and thus generally not recommended to use.
 #' @param ... More arguments to pass to \code{rstan::sampling} via \link[tmbstan]{tmbstan}, for example, \code{init} for starting values for the MCMC.
 #' @seealso \link{fit_model} \link{summary.stanfit} \link{plot.stanfit}
-#' @importFrom tmbstan tmbstan
-#' @importFrom TMB MakeADFun
 #' @examples
 #' \donttest{
 #' data(BC_lakes)
@@ -107,6 +104,7 @@ fit_model <- function(RBdata, start = NULL, nit_harvest = 5L, use_priors = TRUE,
 #' stan_trace(samps) # Trace plot of posteriors
 #' stan_dens(samps) # Density plot of posteriors
 #' }
+#' @importFrom tmbstan tmbstan
 #' @export
 run_mcmc <- function(RBfit, priors_only = FALSE, chains = 2L, iter = 2e4, warmup = 0.5 * iter, thin = 5,
                      seed = 1, cores = chains, lower = NULL, upper = NULL, ...) {
@@ -139,37 +137,75 @@ run_mcmc <- function(RBfit, priors_only = FALSE, chains = 2L, iter = 2e4, warmup
   return(stan_obj)
 }
 
-#' Generates stochastic length and age-length samples runs a simulation
+#' Generates stochastic length and age-length samples to run a simulation
 #'
-#' Simulate data for assessment model.
+#' Simulate data for the assessment model.
 #'
-#' @param RBfit A fitted assessment object used for setting up the simulation.
+#' @param RBdata \linkS4class{RBdata} object used for setting up the simulation.
+#' @param pars Matrix of parameters. See details.
+#' @param N Numeric vector of length two for the number of age-length and length samples.
+#' @param CV_L_stock Numeric, the CV of length at stocking among simulations.
+#' @param CV_stock_d Numeric, the CV of stocking density among simulations.
+#' @param seed Integer, for replicating random number generation.
+#' @details The \code{pars} matrix should be nsim rows long and have columns.
+#' @import stats
+#' @import TMB
 #' @export
-simulation <- function(RBfit, pars, N = c(50, 100), seed = 1) {
-  if(!is.matrix(pars)) stop("pars is not a matrix.")
+simulation <- function(RBdata, pars, N = c(50, 100), CV_L_stock = 0, CV_stock_d = 0, seed = 1L) {
+  RBdata <- validate_RBdata(RBdata)
+  if(!is.matrix(pars)) {
+    if(is.data.frame(pars) && all(apply(pars, 2, is.numeric))) {
+      pars <- as.matrix(pars)
+    } else stop("pars is not a data frame that can be converted to a matrix.", call. = FALSE)
+  }
+  if(ncol(pars) != 10) stop("Ten (10) columns needed for `pars` matrix. See help file.", call. = FALSE)
   nsim <- nrow(pars)
 
-  set.seed(seed)
+  Monte_Carlo_fn <- function(x, RBdata) { # x indexes simulation number
+    set.seed(seed + x)
+    n_age <- length(RBdata@Age)
+    if(CV_L_stock > 0) {
+      Lstock_mu <- RBdata@L_stock
+      par_samp <- lognormal_par(list(Lstock_mu, Lstock_mu * CV_L_stock))
+      RBdata@L_stock <- rlnorm(n_age, par_samp[1:n_age], par_samp[(n_age+1):(2*n_age)])
+    }
+    if(CV_stock_d > 0) {
+      stock_mu <- RBdata@stock_density
+      par_samp <- lognormal_par(list(stock_mu, stock_mu * CV_stock_d))
+      RBdata@stock_density <- rlnorm(n_age, par_samp[1:n_age], par_samp[(n_age+1):(2*n_age)])
+    }
 
-  Monte_Carlo_fn <- function(x) {
-    rep_list <- RBfit@obj$report(pars[x, ])
-    pred_N <- rep_list$survey_N
-    pred_L <- rep_list$survey_NL
-    pred_F <- rep_list$F
+    model_data <- list(Len_data = RBdata@Length, Len_age_data = RBdata@Age_length, age_adjust = RBdata@Age_adjust,
+                       Lmid = RBdata@Length_bin, Lbin_width = unique(diff(RBdata@Length_bin)), stocking_density = RBdata@stock_density,
+                       L_stock = RBdata@L_stock, bag_limit = RBdata@bag_limit, release_mortality = RBdata@release_mortality,
+                       p_vrel = RBdata@p_vrel, use_likelihood = as.integer(FALSE), use_priors = as.integer(TRUE),
+                       init_p_harvest = 1, nit_harvest = 5L)
 
-    samp_N <- as.vector(rmultinom(1, N[1], pred_N))
+    model_priors <- generate_priors(RBdata)
+
+    model_par <- list(Linf = RBdata@prior_Linf[1], K = RBdata@prior_K[1], CV_Len = RBdata@prior_CV_Len[1], M = RBdata@prior_M[1],
+                      q = RBdata@prior_q[1], Effort = RBdata@prior_Effort[1], GN_SL50 = RBdata@prior_GN_SL50[1], GN_gamma = RBdata@prior_GN_gamma[1],
+                      angler_SL50 = RBdata@prior_angler_SL50[1], angler_gamma = RBdata@prior_angler_gamma[1])
+
+    obj <- MakeADFun(data = c(model_data, model_priors), parameters = model_par, DLL = "RBassess", silent = TRUE)
+
+    report <- obj$report(pars[x, ])
+    pred_N <- report$survey_N
+    pred_L <- report$survey_NL
+    pred_F <- report$F
+
+    samp_N <- rmultinom(1, N[1], pred_N)[, 1]
     samp_N <- matrix(samp_N, nrow = nrow(pred_N), ncol = ncol(pred_N))
-    samp_L <- as.vector(rmultinom(1, N[2], pred_L))
+    samp_L <- rmultinom(1, N[2], pred_L)[, 1]
 
-    RBdata <- RBfit@RBdata
     RBdata@Length <- samp_L
     RBdata@Age_length <- samp_N
     RBdata@Lake <- paste("Simulation No.", x)
-    output <- list(RBdata = RBdata, true_N = pred_N, true_L = pred_L, F = pred_F, report = rep_list)
+    output <- list(RBdata = RBdata, sim = report)
     return(output)
   }
 
-  res <- lapply(1:nsim, Monte_Carlo_fn)
+  res <- lapply(1:nsim, Monte_Carlo_fn, RBdata = RBdata)
   return(res)
 }
 
