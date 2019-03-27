@@ -1,5 +1,5 @@
 
-plot_age_length <- function(RBdata, RBfit = NULL, bubble = 7, sdlen = 0.95) {
+plot_age_length <- function(RBdata, RBfit = NULL, stan_obj = NULL, bubble = 7, sdlen = 0.95) {
   if(all(is.na(RBdata@Age_length))) {
     plot(NULL, NULL, typ = "n", xlab = "Age (accumulated degree years)", ylab = "Length", xlim = c(0, 1), ylim = c(0, 1))
     text(x = 0.5, y = 0.5, labels = "No age-length data.")
@@ -27,6 +27,27 @@ plot_age_length <- function(RBdata, RBfit = NULL, bubble = 7, sdlen = 0.95) {
     len_lims <- c(0.5 * (1 - sdlen), 1 - 0.5 * (1 - sdlen))
     lines(RBdata@Age_adjust[order_vec], qnorm(len_lims[1], RBfit@report$Len_age, RBfit@report$sd)[order_vec], col = "red", lty = 2)
     lines(RBdata@Age_adjust[order_vec], qnorm(len_lims[2], RBfit@report$Len_age, RBfit@report$sd)[order_vec], col = "red", lty = 2)
+  }
+  if(!is.null(stan_obj)) {
+    order_vec <- order(RBdata@Age_adjust)
+
+    sim <- stan_obj@sim
+    ind <- 1:(sim$warmup %/% sim$thin)
+    mcmc_samps <- lapply(sim$samples, function(x) lapply(x, `[`, -ind))
+
+    get_length_at_age <- function(Linf, K, RBdata) {
+      RBdata@L_stock * exp(-K * RBdata@Age_adjust) + Linf * (1 - exp(-K * RBdata@Age_adjust))
+    }
+    map_fn <- function(y, RBdata) {
+      res <- Map(get_length_at_age, Linf = y$Linf, K = y$K, MoreArgs = list(RBdata = RBdata))
+      do.call(rbind, res)
+    }
+    get_matrix <- function(x, RBdata) {
+      res <- lapply(x, map_fn, RBdata = RBdata)
+      do.call(rbind, res)
+    }
+    res <- get_matrix(mcmc_samps, RBdata)
+    lines(RBdata@Age_adjust[order_vec], colMeans(res)[order_vec], col = "red", lwd = 3)
   }
 
   legend("topright", legend = paste("N =", sum(RBdata@Age_length, na.rm = TRUE)), bty = "n", text.font = 2)
@@ -70,7 +91,7 @@ plot_Lstart <- function(RBdata) {
   plot(RBdata@Age, RBdata@L_stock, xlab = "Age", ylab = "Length at stocking", typ = "o", pch = 16)
 }
 
-plot_age_length_residual <- function(RBfit, bubble = 7) {
+plot_age_length_residual <- function(RBfit, bubble = 7, add_title = TRUE) {
   if(all(is.na(RBfit@RBdata@Age_length))) {
     plot(NULL, NULL, typ = "n", xlab = "Age (accumulated degree years)", ylab = "Length", xlim = c(0, 1), ylim = c(0, 1))
     text(x = 0.5, y = 0.5, labels = "No age-length data.")
@@ -96,7 +117,7 @@ plot_age_length_residual <- function(RBfit, bubble = 7) {
       }
     }
   }
-  title("Age-length residual")
+  if(add_title) title("Age-length residual")
 
   legend("bottomright", legend = paste(c("<", ">"), range_resids), pt.cex = 0.5 * diameter_max * abs(range_resids),
          pt.bg = ifelse(range_resids > 0, "grey80", "white"), pch = 21, horiz = TRUE)
@@ -105,7 +126,7 @@ plot_age_length_residual <- function(RBfit, bubble = 7) {
 
 }
 
-plot_length_residual <- function(RBfit) {
+plot_length_residual <- function(RBfit, ylab = "Standardized\nPearson Residual") {
   obs <- RBfit@RBdata@Length
   obs[obs <= 0] <- NA
   pred_N <- sum(obs, na.rm = TRUE) * RBfit@report$survey_NL/sum(RBfit@report$survey_NL)
@@ -120,7 +141,7 @@ plot_length_residual <- function(RBfit) {
   }
 
   barplot(rep(0, length(obs)), names.arg = RBfit@RBdata@Length_bin, space = 0, border = NA,
-          xlab = "Length", ylab = "Standardized\nPearson Residual", ylim = ylim)
+          xlab = "Length", ylim = ylim)
   if(all(is.na(obs))) {
     text(x = 0.5 * length(obs), y = 0.5, labels = "No length data.")
   } else {
@@ -132,14 +153,41 @@ plot_length_residual <- function(RBfit) {
   return(invisible())
 }
 
-plot_selectivity <- function(RBfit) {
+plot_selectivity <- function(RBfit, stan_obj = NULL) {
   Length_bin <- RBfit@RBdata@Length_bin
 
   barplot(rep(0, length(Length_bin)), names.arg = Length_bin, space = 0, border = NA,
           xlab = "Length", ylab = "Selectivity", ylim = c(-0.1, 1.1), yaxp = c(0, 1, 2))
   abline(h = 0, col = "grey")
-  lines(1:length(Length_bin) - 0.5, RBfit@report$sel_GN, lwd = 3)
-  lines(1:length(Length_bin) - 0.5, RBfit@report$sel_angler, lwd = 3, lty = 3)
+
+  if(is.null(stan_obj)) {
+    GN <- RBfit@report$sel_GN
+    ang <- RBfit@report$sel_angler
+  } else {
+
+    sim <- stan_obj@sim
+    ind <- 1:(sim$warmup %/% sim$thin)
+    mcmc_samps <- lapply(sim$samples, function(x) lapply(x, `[`, -ind))
+
+    get_sel <- function(L50, gamma, Len_bin) {
+      sel <- 1/(1 + exp(-gamma * (Len_bin - L50))); return(sel/max(sel))
+    }
+    map_fn <- function(y, Len, L50c, gammac) {
+      res <- Map(get_sel, L50 = getElement(y, L50c), gamma = getElement(y, gammac), MoreArgs = list(Len = Len))
+      do.call(rbind, res)
+    }
+    get_matrix <- function(x, Len, L50c, gammac) {
+      res <- lapply(x, map_fn, Len = Len, L50c = L50c, gammac = gammac)
+      do.call(rbind, res)
+    }
+    GN_mat <- get_matrix(mcmc_samps, Len = Length_bin, L50c = "GN_SL50", gammac = "GN_gamma")
+    GN <- colMeans(GN_mat)
+    ang_mat <- get_matrix(mcmc_samps, Len = Length_bin, L50c = "angler_SL50", gammac = "angler_gamma")
+    ang <- colMeans(ang_mat)
+  }
+
+  lines(1:length(Length_bin) - 0.5, GN, lwd = 3)
+  lines(1:length(Length_bin) - 0.5, ang, lwd = 3, lty = 3)
   legend("bottomright", legend = c("Gillnet", "Angler"), lty = c(1, 3), lwd = 2)
   box()
 

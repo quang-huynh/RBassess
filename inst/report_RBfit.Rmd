@@ -1,0 +1,79 @@
+---
+title: "RBassess model report"
+subtitle: "Lake name"
+author: "No author provided"
+date: "`r Sys.Date()`"
+---
+<style type="text/css">
+h1 { /* Header 1 */
+ font-size: 24px;
+}
+</style>
+
+```{r setup, include = FALSE, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, echo = FALSE,
+  fig.width = 6, fig.height = 4.5,
+  out.width = "650px",
+  comment = "#>"
+)
+
+```
+
+# Summary of Posterior Mode {.tabset}
+## Data and Model Fits
+
+```{r fig.cap = "Figure 1. Age and length observations from the gillnet survey. Bubbles show observed data points. Solid red line indicates estimated length-at-age, and dotted line indicate 95% bounds of length-at-age variability."}
+plot_age_length(x@RBdata, x, bubble = bubble)
+```
+
+```{r fig.cap = "Figure 2. Standardized Pearson residuals from observed and predicted length-at-age."}
+plot_age_length_residual(x, bubble = bubble, add_title = FALSE)
+```
+
+```{r fig.cap = "Figure 3. Length observations from the gillnet survey. Bars show observed data points and solid red line indicates predicted length composition."}
+plot_length(x@RBdata, x)
+```
+
+```{r fig.cap = "Figure 4. Length residuals."}
+plot_length_residual(x, ylab = "Standardized Pearson Residual")
+```
+
+```{r fig.cap = "Figure 5. Stocking density."}
+plot_stocking_density(x@RBdata)
+```
+
+```{r fig.cap = "Figure 6. Length at stocking."}
+plot_Lstart(x@RBdata)
+```
+
+```{r fig.cap = "Figure 7. Accumulated growing degree time (years) for the cohorts in the model. Dotted line is the 1-to-1 line."}
+plot(x@RBdata@Age, x@RBdata@Age_adjust, xlab = "Integer Age", ylab = "Accumulated growing degree time (years)",
+     typ = "o", pch = 16)
+abline(a = 0, b = 1, lty = 2)
+```
+
+## Parameter Estimates
+```{r, echo = FALSE, cols.min.print = 5, rows.print = 14}
+generate_summary_table(x)
+```
+```{r fig.cap = "Figure 8. Estimates of angler and gillnet selectivity-at-length."}
+plot_selectivity(x)
+```
+
+```{r fig.cap = "Figure 9. Convergence diagnostic plot of F. In the model, F is solved iteratively and should stabilize as the number of iterations increase. If not, increase the number of iterations."}
+plot_F_diagnostic(x)
+```
+
+
+## Posterior Distribution
+
+```{r fig.cap = "Figure 10. Prior and posterior distributions. Priors were drawn from a lognormal distribution and posteriors are normal approximations from the estimated Hessian matrix. Dotted vertical lines indicate means.", fig.height = 6, fig.width = 6}
+plot_pars(RBdata = x@RBdata, RBfit = x, plot.title = "", plot_type = "posterior_mode")
+```
+
+# R version
+This report was generated on: `r Sys.time()`
+
+`r R.version.string`<br />
+RBassess version `r packageVersion('RBassess')`

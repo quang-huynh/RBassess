@@ -1,0 +1,90 @@
+---
+title: "RBassess model report"
+subtitle: "Lake name"
+author: "No author provided"
+date: "`r Sys.Date()`"
+---
+<style type="text/css">
+h1 { /* Header 1 */
+ font-size: 24px;
+}
+</style>
+
+```{r setup, include = FALSE, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, echo = FALSE, message = FALSE,
+  fig.width = 6, fig.height = 4.5,
+  out.width = "650px",
+  comment = "#>"
+)
+
+```
+
+# Summary of MCMC chain {.tabset}
+## Data and Model Fits
+
+```{r fig.cap = "Figure 1. Age and length observations from the gillnet survey. Solid red line indicates mean length-at-age taken from the posterior mean."}
+plot_age_length(x@.MISC$RBfit@RBdata, stan_obj = x, bubble = bubble)
+```
+
+```{r fig.cap = "Figure 2. Length observations from the gillnet survey."}
+plot_length(x@.MISC$RBfit@RBdata)
+```
+
+```{r fig.cap = "Figure 3. Stocking density."}
+plot_stocking_density(x@.MISC$RBfit@RBdata)
+```
+
+```{r fig.cap = "Figure 4. Length at stocking."}
+plot_Lstart(x@.MISC$RBfit@RBdata)
+```
+
+```{r fig.cap = "Figure 5. Accumulated growing degree time (years) for the cohorts in the model. Dotted line is the 1-to-1 line."}
+plot(x@.MISC$RBfit@RBdata@Age, x@.MISC$RBfit@RBdata@Age_adjust, xlab = "Integer Age", ylab = "Accumulated growing degree time (years)",
+     typ = "o", pch = 16)
+abline(a = 0, b = 1, lty = 2)
+```
+
+## Parameter Estimates
+
+Table 1. Posterior means, standard deviation (SD), and coefficients of variation (CV).
+
+```{r, echo = FALSE, cols.min.print = 5, rows.print = 17}
+generate_summary_table(x)
+```
+
+```{r fig.cap = "Figure 6. Angler and gillnet selectivity-at-length from posterior mean."}
+plot_selectivity(x@.MISC$RBfit, x)
+```
+
+## Posterior Distribution
+
+```{r fig.cap = "Figure 7. Posterior distributions. Dotted vertical lines indicate means.", fig.height = 6, fig.width = 6}
+if(is.null(y)) {
+  plot_pars(RBdata = x@.MISC$RBfit@RBdata, stan_obj = x, plot.title = "", plot_type = "MCMC")
+} else plot_pars(RBdata = x@.MISC$RBfit@RBdata, stan_obj = x, stan_prior = y, plot.title = "", plot_type = "MCMC_both")
+```
+
+## MCMC Diagnostics
+```{r fig.height = 5, fig.width = 6, out.width = "800px", fig.cap = "Figure 8. Autocorrelation plot of MCMC chains."}
+rstan::stan_ac(x)
+```
+
+```{r fig.height = 6, fig.width = 8, out.width = "800px", fig.cap = "Figure 9. Trace plot of MCMC chains."}
+rstan::stan_trace(x)
+```
+<br /><br />
+Table 2. Diagnostic statistics n_eff (effective sample size) and Rhat (Gelman-Rubin statistic) for the parameters in the model.
+```{r echo = FALSE, cols.min.print = 3, rows.print = 17}
+as.data.frame(summary(x)[[1]][, 9:10])
+```
+<br /><br />
+
+**Note:** Additional diagnostics are available through the Shiny app in the `shinystan` package: `shinystan::launch_shinystan()`
+
+
+# R version
+This report was generated on: `r Sys.time()`
+
+`r R.version.string`<br />
+RBassess version `r packageVersion('RBassess')`
