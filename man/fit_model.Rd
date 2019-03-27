@@ -30,9 +30,10 @@ Setup the TMB model and runs the optimization to return the posterior mode.
 }
 \examples{
 data(BC_lakes)
-mod <- fit_model(BC_lakes[[1]]) # Run model
+mod <- fit_model(BC_lakes[[42]]) # Run model
 plot(mod) # View model results
+report(mod) # Generate HTML report
 }
 \seealso{
-\link{run_mcmc} \link{simulation} \link{summary.RBfit} \link{plot.RBfit}
+\link{run_mcmc} \link{report} \link{simulation} \link{summary.RBfit} \link{plot.RBfit}
 }

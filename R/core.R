@@ -23,14 +23,15 @@ NULL
 #' @param upper A vector of the upper bounds of the parameters. This argument overrides the default, and thus generally not recommended to use.
 #' @param control A list of control arguments to be passed to \link[stats]{nlminb}.
 #' @param ... More arguments to pass in.
-#' @seealso \link{run_mcmc} \link{simulation} \link{summary.RBfit} \link{plot.RBfit}
+#' @seealso \link{run_mcmc} \link{report} \link{simulation} \link{summary.RBfit} \link{plot.RBfit}
 #' @useDynLib RBassess
 #' @import TMB
 #' @importFrom stats nlminb
 #' @examples
 #' data(BC_lakes)
-#' mod <- fit_model(BC_lakes[[1]]) # Run model
+#' mod <- fit_model(BC_lakes[[42]]) # Run model
 #' plot(mod) # View model results
+#' report(mod) # Generate HTML report
 #' @export
 fit_model <- function(RBdata, start = NULL, nit_harvest = 5L, use_priors = TRUE, lower = NULL, upper = NULL,
                       control = list(iter.max = 1e3, eval.max = 1e3), ...) {
@@ -85,11 +86,11 @@ fit_model <- function(RBdata, start = NULL, nit_harvest = 5L, use_priors = TRUE,
 #' @param lower A vector of the lower bounds of the parameters. This argument overrides the default, and thus generally not recommended to use.
 #' @param upper A vector of the upper bounds of the parameters. This argument overrides the default, and thus generally not recommended to use.
 #' @param ... More arguments to pass to \code{rstan::sampling} via \link[tmbstan]{tmbstan}, for example, \code{init} for starting values for the MCMC.
-#' @seealso \link{fit_model} \link{summary.stanfit} \link{plot.stanfit}
+#' @seealso \link{fit_model} \link{plot.stanfit} \link{report}
 #' @examples
 #' \donttest{
 #' data(BC_lakes)
-#' mod <- fit_model(BC_lakes[[1]]) # Run model
+#' mod <- fit_model(BC_lakes[[42]]) # Run model
 #'
 #' pr_only <- run_mcmc(mod, priors_only = TRUE) # Run MCMC on priors
 #' plot(pr_only) # Shows density plots of priors
@@ -97,6 +98,9 @@ fit_model <- function(RBdata, start = NULL, nit_harvest = 5L, use_priors = TRUE,
 #' samps <- run_mcmc(mod) # Run MCMC with likelihood for data
 #' plot(samps) # Shows density plots of posteriors
 #' plot(samps, pr_only) # Shows density plots of both priors and posteriors
+#'
+#' report(samps) # Generate report
+#' report(samps, pr_only)
 #'
 #' ##### Any plotting diagnostic function from the rstan package can be used.
 #' summary(samps) # Summary of parameter values
@@ -108,6 +112,8 @@ fit_model <- function(RBdata, start = NULL, nit_harvest = 5L, use_priors = TRUE,
 #' @export
 run_mcmc <- function(RBfit, priors_only = FALSE, chains = 2L, iter = 2e4, warmup = 0.5 * iter, thin = 5,
                      seed = 1, cores = chains, lower = NULL, upper = NULL, ...) {
+  attachNamespace("tmbstan")
+  attachNamespace("rstan")
 
   obj <- RBfit@obj
   if(priors_only) {

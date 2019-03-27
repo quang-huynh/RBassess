@@ -3,19 +3,32 @@
 \docType{methods}
 \name{report}
 \alias{report}
-\alias{report,RBfit-method}
+\alias{report,RBfit,missing-method}
+\alias{report,RBfit-missing-method}
+\alias{report,stanfit,missing-method}
+\alias{report,stanfit-missing-method}
+\alias{report,stanfit,stanfit-method}
+\alias{report,stanfit-stanfit-method}
 \title{HTML report for assessment model}
 \usage{
 report(x, y, ...)
 
-\S4method{report}{RBfit}(x, dir = tempdir(), author = NULL,
+\S4method{report}{RBfit,missing}(x, dir = tempdir(), author = NULL,
   bubble = 7, ...)
+
+\S4method{report}{stanfit,missing}(x, dir = tempdir(), author = NULL,
+  bubble = 7, ...)
+
+\S4method{report}{stanfit,stanfit}(x, y, dir = tempdir(),
+  author = NULL, bubble = 7, ...)
 }
 \arguments{
 \item{x}{An object of class \code{RBfit} returned from \link{fit_model} or class \code{stanfit}
 returned from \link{run_mcmc}.}
 
 \item{y}{An optional object of class \code{stanfit} which only sampled the priors.}
+
+\item{...}{Miscellaneous arguments to pass.}
 
 \item{dir}{The directory for saving the HTML document.}
 
