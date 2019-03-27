@@ -85,6 +85,9 @@ From a starting value of $p_h$, $F$ is solved iteratively through Equations 10-1
 
 From Equation 16, voluntary release acts upon retention behavior before the bag limit. For example, if the bag limit is 5 fish per day and anglers release half their catch, then then an angler that catches 8 fish would keep four of them.
 
+Finally, the harvest rate $u$ is calculated as the ratio of total catch to total abundance:
+$$u = \dfrac{\sum_{\ell}\sum_a C_{\ell, a}} {\sum_{\ell}\sum_a N_{\ell, a}}.$$
+
 # Likelihood
 
 In the model, the numbers at length and age from the survey $N^{GN}_{\ell,a}$ is calculated as

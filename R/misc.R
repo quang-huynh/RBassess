@@ -63,10 +63,11 @@ lognormal_par <- function(x) {
 
 posterior_derived <- function(stan_obj, obj) {
   sim <- stan_obj@sim
-  sim$n_flatnames <- 14
-  sim$pars_oi <- c(sim$pars_oi, "F", "p_harvest", "CPUE")
-  sim$fnames_oi <- c(sim$fnames_oi, "F", "p_harvest", "CPUE")
-  sim$dims_oi <- c(sim$dims_oi, list(F = numeric(0), p_harvest = numeric(0), CPUE = numeric(0)))
+  sim$n_flatnames <- 17
+  sim$pars_oi <- c(sim$pars_oi, "F", "p_harvest", "CPUE", "u", "F_retain", "F_release")
+  sim$fnames_oi <- c(sim$fnames_oi, "F", "p_harvest", "CPUE", "u", "F_retain", "F_release")
+  sim$dims_oi <- c(sim$dims_oi, list(F = numeric(0), p_harvest = numeric(0), CPUE = numeric(0), u = numeric(0),
+                                     F_retain = numeric(0), F_release = numeric(0)))
 
   generate_derived_samples <- function(x) {
 
@@ -75,20 +76,23 @@ posterior_derived <- function(stan_obj, obj) {
                     par <- c(x$Linf[i], x$K[i], x$CV_Len[i], x$M[i], x$Effort[i], x$q[i], x$GN_SL50[i], x$GN_gamma[i],
                              x$angler_SL50[i], x$angler_gamma[i])
                     rep <- obj$report(par)
-                    return(c(rep$F, rep$p_harvest, rep$CPUE))
+                    return(c(rep$F, rep$p_harvest, rep$CPUE, rep$u, rep$F_retain, rep$F_release))
                   })
     res <- do.call(rbind, res)
     x$F <- res[, 1]
     x$p_harvest <- res[, 2]
     x$CPUE <- res[, 3]
+    x$u <- res[, 4]
+    x$F_retain <- res[, 5]
+    x$F_release <- res[, 6]
 
     inits <- attr(x, "inits")
     rep_init <- obj$report(inits)
-    new_inits <- c(inits, rep_init$F, rep_init$p_harvest, rep_init$CPUE)
+    new_inits <- c(inits, rep_init$F, rep_init$p_harvest, rep_init$CPUE, rep_init$u, rep_init$F_retain, rep_init$F_release)
     attr(x, "inits") <- new_inits
 
     mean_pars <- attr(x, "mean_pars")
-    new_mean_pars <- c(mean_pars, x$F, x$p_harvest, x$CPUE)
+    new_mean_pars <- c(mean_pars, colMeans(res))
     attr(x, "mean_pars") <- new_mean_pars
 
     return(x)
@@ -99,14 +103,17 @@ posterior_derived <- function(stan_obj, obj) {
   sim$samples <- new_samps
   stan_obj@sim <- sim
 
-  stan_obj@model_pars <- c(stan_obj@model_pars, "F", "p_harvest", "CPUE")
-  stan_obj@par_dims <- c(stan_obj@par_dims, list(F = numeric(0), p_harvest = numeric(0), CPUE = numeric(0)))
+  stan_obj@model_pars <- c(stan_obj@model_pars, "F", "p_harvest", "CPUE", "u", "F_retain", "F_release")
+  stan_obj@par_dims <- c(stan_obj@par_dims,
+                         list(F = numeric(0), p_harvest = numeric(0), CPUE = numeric(0), u = numeric(0),
+                              F_retain = numeric(0), F_release = numeric(0)))
 
   add_inits <- function(x) {
     pars <- do.call(c, x)
     rep <- obj$report(pars)
 
-    res <- c(x, list(F = rep$F, p_harvest = rep$p_harvest, CPUE = rep$CPUE))
+    res <- c(x, list(F = rep$F, p_harvest = rep$p_harvest, CPUE = rep$CPUE, u = rep$u,
+                     F_retain = rep$F_retain, F_release = rep$F_release))
     return(res)
   }
   stan_obj@inits <- lapply(stan_obj@inits, add_inits)

@@ -154,6 +154,7 @@ Type objective_function<Type>::operator() ()
   Type F = F_vec(nit_harvest-1);
   Type F_retain = q * Effort * p_harvest;
   Type F_release = F - F_retain;
+  Type u = Cat.sum()/N.sum();
 
   // Negative log prior density
   Type neg_log_prior = 0;
@@ -197,10 +198,12 @@ Type objective_function<Type>::operator() ()
   ADREPORT(F);
   ADREPORT(p_harvest);
   ADREPORT(CPUE);
+  ADREPORT(u);
 
   REPORT(F_vec);
   REPORT(F_retain);
   REPORT(F_release);
+  REPORT(u);
 
   REPORT(Len_age);
   REPORT(Linf);
