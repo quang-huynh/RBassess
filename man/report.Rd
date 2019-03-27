@@ -14,13 +14,13 @@
 report(x, y, ...)
 
 \S4method{report}{RBfit,missing}(x, dir = tempdir(), author = NULL,
-  bubble = 7, ...)
+  filename = NULL, bubble = 7, ...)
 
 \S4method{report}{stanfit,missing}(x, dir = tempdir(), author = NULL,
-  bubble = 7, ...)
+  filename = NULL, bubble = 7, ...)
 
 \S4method{report}{stanfit,stanfit}(x, y, dir = tempdir(),
-  author = NULL, bubble = 7, ...)
+  author = NULL, filename = NULL, bubble = 7, ...)
 }
 \arguments{
 \item{x}{An object of class \code{RBfit} returned from \link{fit_model} or class \code{stanfit}
@@ -33,6 +33,8 @@ returned from \link{run_mcmc}.}
 \item{dir}{The directory for saving the HTML document.}
 
 \item{author}{A character string for the author.}
+
+\item{filename}{Optional, string for name of the HTML file.}
 
 \item{bubble}{Numeric for scaling size of bubbles in bubble plot. See \link{plot.RBdata}.}
 }

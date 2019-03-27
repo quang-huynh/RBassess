@@ -10,6 +10,7 @@
 #' @param y An optional object of class \code{stanfit} which only sampled the priors.
 #' @param dir The directory for saving the HTML document.
 #' @param author A character string for the author.
+#' @param filename Optional, string for name of the HTML file.
 #' @param bubble Numeric for scaling size of bubbles in bubble plot. See \link{plot.RBdata}.
 #' @param ... Miscellaneous arguments to pass.
 #' @export
@@ -20,8 +21,8 @@ setGeneric("report", function(x, y, ...) standardGeneric("report"))
 #' @importFrom rmarkdown render
 #' @export
 setMethod("report", signature(x = "RBfit", y = "missing"),
-          function(x, dir = tempdir(), author = NULL, bubble = 7, ...) {
-            report_internal(x = x, dir = dir, author = author, bubble = bubble, ...)
+          function(x, dir = tempdir(), author = NULL, filename = NULL, bubble = 7, ...) {
+            report_internal(x = x, dir = dir, author = author, filename = filename, bubble = bubble, ...)
           })
 
 #' @rdname report
@@ -29,8 +30,8 @@ setMethod("report", signature(x = "RBfit", y = "missing"),
 #' @importFrom rmarkdown render
 #' @export
 setMethod("report", signature(x = "stanfit", y = "missing"),
-          function(x, dir = tempdir(), author = NULL, bubble = 7, ...) {
-            report_internal(x = x, dir = dir, author = author, bubble = bubble, ...)
+          function(x, dir = tempdir(), author = NULL, filename = NULL, bubble = 7, ...) {
+            report_internal(x = x, dir = dir, author = author, filename = filename, bubble = bubble, ...)
           })
 
 #' @rdname report
@@ -38,16 +39,18 @@ setMethod("report", signature(x = "stanfit", y = "missing"),
 #' @importFrom rmarkdown render
 #' @export
 setMethod("report", signature(x = "stanfit", y = "stanfit"),
-          function(x, y, dir = tempdir(), author = NULL, bubble = 7, ...) {
-            report_internal(x = x, y = y, dir = dir, author = author, bubble = bubble, ...)
+          function(x, y, dir = tempdir(), author = NULL, filename = NULL, bubble = 7, ...) {
+            report_internal(x = x, dir = dir, author = author, filename = filename, bubble = bubble, ...)
           })
 
-report_internal <- function(x, y = NULL, dir, author, bubble = 7, ...) {
+report_internal <- function(x, y = NULL, dir, author, filename, bubble = 7, ...) {
   if(inherits(x, "RBfit")) {
+    if(is.null(filename)) filename <- "report_RBfit"
     rep_file <- file.path(path.package("RBassess"), "report_RBfit.Rmd")
     Lake_name <- ifelse(nchar(x@RBdata@Lake) > 0, x@RBdata@Lake, substitute(x))
   }
   if(inherits(x, "stanfit")) {
+    if(is.null(filename)) filename <- "report_stanfit"
     rep_file <- file.path(path.package("RBassess"), "report_stanfit.Rmd")
     Lake_name <- ifelse(nchar(x@.MISC$RBfit@RBdata@Lake) > 0, x@.MISC$RBfit@RBdata@Lake, substitute(x))
   }
@@ -68,15 +71,17 @@ report_internal <- function(x, y = NULL, dir, author, bubble = 7, ...) {
   }
 
   # Write Rmd to dir
-  write(rmd, file = file.path(dir, "report.Rmd"))
+  filename_html <- paste0(filename, ".html")
+  filename_rmd <- paste0(filename, ".Rmd")
+  write(rmd, file = file.path(dir, filename_rmd))
 
   # Render file
   message("Rendering HTML file...")
-  rmarkdown::render(file.path(dir, "report.Rmd"), "html_document", "report.html", dir,
+  rmarkdown::render(file.path(dir, filename_rmd), "html_document", filename_html, dir,
                     output_options = list(df_print = "paged"))
 
   # Open html file
-  browseURL(file.path(dir, "report.html"))
+  browseURL(file.path(dir, filename_html))
   invisible()
 }
 
