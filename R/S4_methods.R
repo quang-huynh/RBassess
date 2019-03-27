@@ -1,4 +1,5 @@
 #' @name plot.RBdata
+#' @aliases plot,RBdata,missing-method
 #' @title \code{plot} methods for S4 classes in \code{RBassess} package
 #'
 #' @description A suite of plot functions for various objects in the RBassess packages. For data, plots length frequency and age-length data, as well as priors.
@@ -39,7 +40,7 @@
 #' rstan::stan_dens(samps) # Density plot of posteriors
 #' }
 #' @export
-setMethod("plot", "RBdata",
+setMethod("plot", signature(x = "RBdata", y = "missing"),
           function(x, bubble = 7, data = TRUE, prior = TRUE, ...) {
 
             old_par <- par(no.readonly = TRUE)
@@ -70,7 +71,7 @@ setMethod("plot", "RBdata",
 #' @rdname plot.RBdata
 #' @aliases plot.RBfit
 #' @export
-setMethod("plot", signature(x = "RBfit"),
+setMethod("plot", signature(x = "RBfit", y = "missing"),
           function(x, bubble = 7, diagnostic = TRUE, posterior = TRUE, ...) {
             old_par <- par(no.readonly = TRUE)
             on.exit(par(old_par))
@@ -102,7 +103,7 @@ setMethod("plot", signature(x = "RBfit"),
 #' @rdname plot.RBdata
 #' @aliases plot.stanfit
 #' @importClassesFrom rstan stanfit
-setMethod("plot", signature(x = "stanfit"),
+setMethod("plot", signature(x = "stanfit", y = "missing"),
           function(x, ...) {
             Lake_name <- if(nchar(x@.MISC$RBfit@RBdata@Lake) > 0) x@.MISC$RBfit@RBdata@Lake else substitute(x)
             plot_pars(RBdata = x@.MISC$RBfit@RBdata, stan_obj = x, plot.title = paste("Posteriors for", Lake_name), plot_type = "MCMC")
@@ -112,7 +113,6 @@ setMethod("plot", signature(x = "stanfit"),
 
 
 #' @rdname plot.RBdata
-#' @aliases plot.stanfit
 #' @importClassesFrom rstan stanfit
 setMethod("plot", signature(x = "stanfit", y = "stanfit"),
           function(x, y, ...) {
@@ -124,6 +124,7 @@ setMethod("plot", signature(x = "stanfit", y = "stanfit"),
 
 #' @name summary
 #' @title \code{summary} method for S4 class \code{RBfit}
+#' @aliases summary,RBfit-method summary.RBfit
 #'
 #' @description Returns parameter estimates and standard deviations.
 #'
@@ -153,30 +154,44 @@ setMethod("summary", signature(object = "RBfit"),
             return(output)
           })
 
-#' @rdname summary
-#' @aliases summary.stanfit
-#' @importClassesFrom rstan stanfit
-#' @importMethodsFrom rstan summary
-#' @export
-setMethod("summary", signature(object = "stanfit"),
-          function(object, description = FALSE, digits = 2, full = FALSE, ...) {
-            output <- do.call(fn, list(object))$summary
-            output <- as.data.frame(output)
+# #' @rdname summary
+# #' @aliases summary.stanfit
+# #' @importClassesFrom rstan stanfit
+# #' @importMethodsFrom rstan summary
+# #' @export
+# setMethod("summary", signature(object = "stanfit"),
+#           function(object, description = FALSE, digits = 2, full = FALSE, ...) {
+#             output <- do.call(rstan_summary, list(object))$summary
+#             output <- as.data.frame(output)
+#
+#             if(!full) output <- output[, c(1, 3)]
+#             output$cv <- output$sd/output$mean
+#             if(!is.na(digits)) output <- round(output, digits)
+#             if(description) output$Description <- add_description_to_summary(output)
+#             colnames(output) <- c("Mean", "Std. Dev.", "CV")
+#             return(output)
+#           })
 
-            if(!full) output <- output[, c(1, 3)]
-            output$cv <- output$sd/output$mean
-            if(!is.na(digits)) output <- round(output, digits)
-            if(description) output$Description <- add_description_to_summary(output)
-            return(output)
-          })
+summary_internal <- function(object, description = FALSE, digits = 2, full = FALSE, ...) {
+  output <- do.call(rstan_summary, list(object))$summary
+  output <- as.data.frame(output)
+  if(!full) output <- output[, c(1, 3)]
+  output$cv <- output$sd/output$mean
+  if(!is.na(digits)) output <- round(output, digits)
+  if(description) output$Description <- add_description_to_summary(output)
+  colnames(output) <- c("Mean", "Std. Dev.", "CV")
+  return(output)
+}
 
-fn <- getMethod("summary", "stanfit", where = asNamespace("rstan"))@.Data
+rstan_summary <- getMethod("summary", "stanfit", where = asNamespace("rstan"))@.Data
 
-par_to_match <- c("Linf", "K", "CV_Len", "M", "Effort", "q", "GN_SL50", "GN_gamma", "angler_SL50", "angler_gamma", "F", "p_harvest", "CPUE", "lp__")
+par_to_match <- c("Linf", "K", "CV_Len", "M", "Effort", "q", "GN_SL50", "GN_gamma", "angler_SL50", "angler_gamma", "F", "p_harvest", "CPUE", "lp__",
+                  "u", "F_retain", "F_release")
 desc <- c("Von Bertalanffy asymptotic length", "Von Bertalanffy growth coefficient", "Coefficient of variation in length at age",
           "Natural mortality (per year)", "Fishing effort (angler days per hectacre)", "Catchability coefficient", "Length of 50% selectivity of gillnet",
           "Slope of gillnet selectivity ogive", "Length of 50% selectivity of angler", "Slope of angler selectivity ogive", "Fishing mortality (per year)",
-          "Probability of harvest", "Catch-per-unit-effort (fish per angler day)", "Log posterior")
+          "Probability of harvest", "Catch-per-unit-effort (fish per angler day)", "Log posterior", "Harvest rate",
+          "Fishing mortality associated with retention", "Fishing mortality from release")
 
 add_description_to_summary <- function(dframe) {
   ind <- match(rownames(dframe), par_to_match)

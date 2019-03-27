@@ -3,15 +3,11 @@
 \docType{methods}
 \name{summary}
 \alias{summary}
+\alias{summary,RBfit-method}
 \alias{summary.RBfit}
-\alias{summary,stanfit-method}
-\alias{summary.stanfit}
 \title{\code{summary} method for S4 class \code{RBfit}}
 \usage{
 \S4method{summary}{RBfit}(object, description = FALSE, digits = 2, ...)
-
-\S4method{summary}{stanfit}(object, description = FALSE, digits = 2,
-  full = FALSE, ...)
 }
 \arguments{
 \item{object}{An object of class \linkS4class{RBfit} or \linkS4class{stanfit}.}

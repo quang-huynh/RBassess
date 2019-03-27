@@ -37,7 +37,7 @@ Set up a stan model and runs the MCMC from a fitted TMB model (see example).
 \examples{
 \donttest{
 data(BC_lakes)
-mod <- fit_model(BC_lakes[[1]]) # Run model
+mod <- fit_model(BC_lakes[[42]]) # Run model
 
 pr_only <- run_mcmc(mod, priors_only = TRUE) # Run MCMC on priors
 plot(pr_only) # Shows density plots of priors
@@ -45,6 +45,9 @@ plot(pr_only) # Shows density plots of priors
 samps <- run_mcmc(mod) # Run MCMC with likelihood for data
 plot(samps) # Shows density plots of posteriors
 plot(samps, pr_only) # Shows density plots of both priors and posteriors
+
+report(samps) # Generate report
+report(samps, pr_only)
 
 ##### Any plotting diagnostic function from the rstan package can be used.
 summary(samps) # Summary of parameter values
@@ -54,5 +57,5 @@ stan_dens(samps) # Density plot of posteriors
 }
 }
 \seealso{
-\link{fit_model} \link{summary.stanfit} \link{plot.stanfit}
+\link{fit_model} \link{summary.stanfit} \link{plot.stanfit} \link{report}
 }
